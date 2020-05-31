@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             NavigationPage.HasNavigationBar="False"
+             x:Class="Android_Music_App.MainPage">
+
+    <StackLayout>
+        <SearchBar x:Name="MusicSearchBar"
+            SearchButtonPressed="SearchButtonPressed_Handler"
+            Placeholder="Search music" />
+
+        <ListView x:Name="MusicResults" ItemsSource="{Binding YoutubeSearchResults}" RowHeight="100" ItemSelected="SongPickedByUser">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" Padding="5">
+                            <StackLayout Orientation="Horizontal">
+                                <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100"/>
+                                <Label Text="{Binding Title}"/>
+                            </StackLayout>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+
+    </StackLayout>
+
+</ContentPage>

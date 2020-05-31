@@ -1,0 +1,20 @@
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\App.xaml.g.cs
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\MainPage.xaml.g.cs
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\Android Music App.AssemblyInfoInputs.cache
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\Android Music App.AssemblyInfo.cs
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\Android Music App.dll
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\ref\Android Music App.dll
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\Android Music App.pdb
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\bin\Debug\netstandard2.0\Android Music App.deps.json
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\bin\Debug\netstandard2.0\Android Music App.dll
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\bin\Debug\netstandard2.0\ref\Android Music App.dll
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\bin\Debug\netstandard2.0\Android Music App.pdb
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\Android Music App.csprojAssemblyReference.cache
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\bin\Debug\netstandard2.0\Mono.Android.dll
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\bin\Debug\netstandard2.0\Mono.Android.pdb
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\bin\Debug\netstandard2.0\Mono.Android.xml
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\Android Music App.csproj.CopyComplete
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\MediaPlayerPage.xaml.g.cs
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\Android Music App.csproj.CoreCompileInputs.cache
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\Android Music App.csproj.Fody.CopyLocal.cache
+C:\Users\levip\source\repos\Android Music App\Android Music App\Android Music App\obj\Debug\netstandard2.0\XamlC.stamp

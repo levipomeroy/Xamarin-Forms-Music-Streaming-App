@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             NavigationPage.HasNavigationBar="False"
+             x:Class="Android_Music_App.MediaPlayerPage">
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical">
+
+            <StackLayout Padding="30">
+                <Image x:Name="SongImage" Source="https://i.dlpng.com/static/png/6805178_preview.png" 
+                   Aspect="AspectFill" 
+                   HeightRequest="400" WidthRequest="400"
+                   HorizontalOptions="Center" VerticalOptions="Center"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Vertical">
+                <Label x:Name="SongTitle" Text="Song name Placeholder"
+                    VerticalOptions="CenterAndExpand" 
+                    HorizontalOptions="Center" FontSize="Title" />
+                <Label Text="Artist - Album" 
+                    VerticalOptions="CenterAndExpand" 
+                    HorizontalOptions="Center" FontSize="Subtitle" />
+            </StackLayout>
+
+            <StackLayout Padding="30,0,30,0">
+                <ProgressBar x:Name="TimeProgressBar" ProgressColor="Blue" />
+                <StackLayout Orientation="Horizontal">
+                    <Label x:Name="CurrentTime" Text="" HorizontalOptions="Start"/>
+                    <Label x:Name="SongDuration" Text="" HorizontalOptions="EndAndExpand"/>
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" HeightRequest="60" HorizontalOptions="Center">
+                <ImageButton Source="https://cdn3.iconfinder.com/data/icons/line/36/skip_back-512.png"
+                    HorizontalOptions="Center"
+                    VerticalOptions="CenterAndExpand" />
+
+                <ImageButton x:Name="PlayPauseButton" Clicked="PlayPausedClicked"
+                    Source="https://www.pngrepo.com/download/55512/play-button.png"
+                    HorizontalOptions="Center"
+                    VerticalOptions="CenterAndExpand" />
+
+                <ImageButton x:Name="NextButton" Clicked="NextClicked"
+                    Source="https://cdn3.iconfinder.com/data/icons/line/36/skip_forward-512.png"
+                    HorizontalOptions="Center"
+                    VerticalOptions="CenterAndExpand" />
+            </StackLayout>
+            
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
