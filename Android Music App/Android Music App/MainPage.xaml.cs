@@ -16,6 +16,9 @@ namespace Android_Music_App
         public MainPage()
         {
             InitializeComponent();
+            SongFileManager.InitFolder();
+            SongFileManager.CleanUpMusicFolder();
+
             BindingContext = new SearchResultsObject();
         }
 
@@ -23,7 +26,7 @@ namespace Android_Music_App
         {
             var playlistClient = new PlaylistSearch();
             var playlists = await playlistClient.GetPlaylists(MusicSearchBar.Text, 1);
-            YoutubeSearchResults = new ObservableCollection<PlaylistObject>(playlists.Select(x=> new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), x.getVideoCount())));
+            YoutubeSearchResults = new ObservableCollection<PlaylistObject>(playlists.Select(x=> new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
 
             MusicResults.ItemsSource = YoutubeSearchResults;
         }

@@ -27,7 +27,7 @@ namespace Android_Music_App
         int _tickCount;
         int _downloadedCount;
         int _playedCount;
-        private const string FILE_DIR = "/storage/emulated/0/Download/";
+        private const string FILE_DIR = "/storage/emulated/0/MusicQueue/";
 
         public MediaPlayerPage(PlaylistObject selectedItem)
         {
@@ -66,7 +66,7 @@ namespace Android_Music_App
         private async Task GetFirstSong()
         {
             _selectedItem = _songsInPlayList.FirstOrDefault();
-            await Downloader.DownloadSingleSong(_selectedItem);
+            await SongFileManager.DownloadSingleSong(_selectedItem);
             _downloadedCount++;
             await PlaySelectedSong();
 
@@ -79,7 +79,7 @@ namespace Android_Music_App
         {
             for (int i =0; i < 10 && i < _songsInPlayList.Count(); i++)
             {
-                await Downloader.DownloadSingleSong(_songsInPlayList.GetItemByIndex(i));
+                await SongFileManager.DownloadSingleSong(_songsInPlayList.GetItemByIndex(i));
                 _downloadedCount++;
             }
         }
@@ -129,11 +129,15 @@ namespace Android_Music_App
             {
                 _mediaPlayer.Pause();
                 _timer.Stop();
+
+                PlayOrPauseButton.Text = "\U000f040c"; //play button
             }
             else
             {
                 _mediaPlayer.Start();
                 _timer.Start();
+
+                PlayOrPauseButton.Text = "\U000f03e5"; //pause button
             }
         }
 
@@ -162,6 +166,7 @@ namespace Android_Music_App
                 SongTitle.Text = _selectedItem.Title;
                 SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
                 SongImage.Source = _selectedItem.ImageSource;
+                PlayOrPauseButton.Text = "\U000f03e5"; //pause button
             });
         }
 

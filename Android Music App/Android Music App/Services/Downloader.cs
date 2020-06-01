@@ -7,9 +7,9 @@ using YoutubeExplode.Videos.Streams;
 
 namespace Android_Music_App.Services
 {
-    public static class Downloader
+    public static class SongFileManager
     {
-        private const string FILE_DIR = "/storage/emulated/0/Download/";
+        private const string FILE_DIR = "/storage/emulated/0/MusicQueue/";
         public static async Task DownloadSingleSong(SearchResultsObject song)
         {
             if (!Directory.GetFiles(FILE_DIR).Any(x => Path.GetFileName(x).Contains(song.Id.ToString()))) //if not already downloaded
@@ -30,5 +30,30 @@ namespace Android_Music_App.Services
                 }
             }
         }
+
+        public static void InitFolder()
+        {
+            Directory.CreateDirectory(FILE_DIR);
+        }
+
+        public static void CleanUpMusicFolder()
+        {
+            const int FILE_LIMIT = 300;
+
+            var allFiles = Directory.GetFiles(FILE_DIR); //cheaper
+            if (allFiles.Count() >= FILE_LIMIT)
+            {
+                var oldFiles = Directory.EnumerateFiles(FILE_DIR)
+                        .Select(i => new FileInfo(i))
+                        .OrderByDescending(i => i.CreationTime)
+                        .Skip(FILE_LIMIT/2);
+
+                foreach(var file in oldFiles)
+                {
+                    file.Delete();
+                }
+            }
+        }
+
     }
 }
