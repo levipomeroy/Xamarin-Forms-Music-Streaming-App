@@ -7,16 +7,6 @@
              x:Class="Android_Music_App.App">
     <Application.Resources>
 
-            <!--<OnPlatform x:TypeArguments="x:String"
-                    x:Key="IconFont">
-                <On Platform="Andriod"
-                Value="materialdesignicons-webfont.ttf#Material Design Icons" />
-                <On Platform="iOS"
-                Value="materialdesignicons-webfont" />
-                <On Platform="UWP"
-                Value="/Assets/materialdesignicons-webfont.ttf#Material Design Icons" />
-            </OnPlatform>-->
-
         <OnPlatform x:Key="Material" x:TypeArguments="x:String">
             <On Platform="iOS" Value="Material Design Icons" />
             <On Platform="Android" Value="materialdesignicons-webfont.ttf#Material Design Icons" />
@@ -24,13 +14,16 @@
 
         <Style TargetType="{x:Type Label}" x:Key="MaterialIcons">
             <Setter Property="FontFamily" Value="{StaticResource Material}"/>
-            <!--<Setter Property="FontSize" Value="100"/>-->
             <Setter Property="HorizontalOptions" Value="Center"/>
             <Setter Property="VerticalOptions" Value="Center"/>
             <Setter Property="TextColor" Value="White"/>
             <Setter Property="BackgroundColor" Value="Transparent"/>
-            <!--<Setter Property="FontSize" Value="Large"/>-->
         </Style>
+
+        <!--<Style TargetType="NavigationPage">
+            <Setter Property="BarBackgroundColor" Value="Black"/>
+            <Setter Property="BarTextColor" Value="White"/>
+        </Style>-->
 
 
     </Application.Resources>

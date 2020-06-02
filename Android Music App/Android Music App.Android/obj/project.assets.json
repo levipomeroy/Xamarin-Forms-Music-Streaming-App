@@ -35,6 +35,30 @@
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
+      "Sharpnado.Forms.HorizontalListView/1.6.0": {
+        "type": "package",
+        "dependencies": {
+          "Sharpnado.TaskMonitor": "1.0.0",
+          "Xamarin.Forms": "3.4.0.1008975"
+        },
+        "compile": {
+          "lib/MonoAndroid10/Sharpnado.Presentation.Forms.Droid.dll": {},
+          "lib/MonoAndroid10/Sharpnado.Presentation.Forms.dll": {}
+        },
+        "runtime": {
+          "lib/MonoAndroid10/Sharpnado.Presentation.Forms.Droid.dll": {},
+          "lib/MonoAndroid10/Sharpnado.Presentation.Forms.dll": {}
+        }
+      },
+      "Sharpnado.TaskMonitor/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Sharpnado.TaskMonitor.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Sharpnado.TaskMonitor.dll": {}
+        }
+      },
       "System.Buffers/4.5.0": {
         "type": "package",
         "compile": {
@@ -938,6 +962,7 @@
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "dependencies": {
+          "Sharpnado.Forms.HorizontalListView": "1.6.0",
           "Xamarin.Essentials": "1.3.1",
           "Xamarin.Forms": "4.4.0.991265",
           "YouTubeSearch": "2.2.1",
@@ -1027,6 +1052,45 @@
         "newtonsoft.json.12.0.3.nupkg.sha512",
         "newtonsoft.json.nuspec",
         "packageIcon.png"
+      ]
+    },
+    "Sharpnado.Forms.HorizontalListView/1.6.0": {
+      "sha512": "ym9o5CQ6oFYXiZZMdEH2QdigGq21MlNESOciCGpyPQQpo8+/8YUQjbIyv+Voob6gUPG0rj+Ux9HQ76EVhUiLJQ==",
+      "type": "package",
+      "path": "sharpnado.forms.horizontallistview/1.6.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "images/sharpnado.png",
+        "lib/MonoAndroid10.0/Sharpnado.Presentation.Forms.Droid.dll",
+        "lib/MonoAndroid10.0/Sharpnado.Presentation.Forms.Droid.pdb",
+        "lib/MonoAndroid10.0/Sharpnado.Presentation.Forms.dll",
+        "lib/MonoAndroid10.0/Sharpnado.Presentation.Forms.pdb",
+        "lib/MonoAndroid10/Sharpnado.Presentation.Forms.Droid.dll",
+        "lib/MonoAndroid10/Sharpnado.Presentation.Forms.Droid.pdb",
+        "lib/MonoAndroid10/Sharpnado.Presentation.Forms.dll",
+        "lib/MonoAndroid10/Sharpnado.Presentation.Forms.pdb",
+        "lib/Xamarin.iOS10/Sharpnado.Presentation.Forms.dll",
+        "lib/Xamarin.iOS10/Sharpnado.Presentation.Forms.iOS.dll",
+        "lib/Xamarin.iOS10/Sharpnado.Presentation.Forms.iOS.pdb",
+        "lib/Xamarin.iOS10/Sharpnado.Presentation.Forms.pdb",
+        "lib/netstandard2.0/Sharpnado.Presentation.Forms.dll",
+        "lib/netstandard2.0/Sharpnado.Presentation.Forms.pdb",
+        "sharpnado.forms.horizontallistview.1.6.0.nupkg.sha512",
+        "sharpnado.forms.horizontallistview.nuspec"
+      ]
+    },
+    "Sharpnado.TaskMonitor/1.0.0": {
+      "sha512": "Yc3P4jOWrF3IVpJSfEookkGkmkbcdvyp/2WLz8dNR5b7/7iyI7tDo64HnyNJ5HVy45g8nrPaGwuauG6rHhZAZg==",
+      "type": "package",
+      "path": "sharpnado.taskmonitor/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Sharpnado.TaskMonitor.dll",
+        "sharpnado.taskmonitor.1.0.0.nupkg.sha512",
+        "sharpnado.taskmonitor.nuspec"
       ]
     },
     "System.Buffers/4.5.0": {

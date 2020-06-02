@@ -13,14 +13,14 @@
 
         <StackLayout Orientation="Vertical">
 
-            <StackLayout Padding="30">
+            <StackLayout  Padding="30">
                 <Image x:Name="SongImage" Source="https://i.dlpng.com/static/png/6805178_preview.png" 
                    Aspect="AspectFill" 
                    HeightRequest="400" WidthRequest="400"
                    HorizontalOptions="Center" VerticalOptions="Center"/>
             </StackLayout>
 
-            <StackLayout Orientation="Vertical">
+            <StackLayout Orientation="Vertical" Padding="30,0,30,0">
                 <Label x:Name="SongTitle" Text="Song name Placeholder"
                     VerticalOptions="CenterAndExpand" 
                     HorizontalOptions="Center" FontSize="Title" TextColor="#ffffff" />

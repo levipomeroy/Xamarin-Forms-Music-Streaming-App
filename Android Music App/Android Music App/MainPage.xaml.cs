@@ -3,6 +3,7 @@ using Android_Music_App.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using YouTubeSearch;
 
@@ -12,14 +13,52 @@ namespace Android_Music_App
     public partial class MainPage : ContentPage
     {
         private ObservableCollection<PlaylistObject> YoutubeSearchResults;
+        private ObservableCollection<PlaylistObject> PopularPlaylistResults;
+        private ObservableCollection<PlaylistObject> EminemResults;
 
         public MainPage()
         {
             InitializeComponent();
             SongFileManager.InitFolder();
             SongFileManager.CleanUpMusicFolder();
+            // Task.Run(() => GetPopularSongs());
+            GetPopularSongs();
+            //GetEminemSongs();
 
-            BindingContext = new SearchResultsObject();
+             BindingContext = new PlaylistObject();
+        }
+
+        public async Task GetPopularSongs()
+        {
+            await Task.Run(async () =>
+            {
+                var playlistClient = new PlaylistSearch();
+                var playlists = await playlistClient.GetPlaylists("top popular song playlists", 1);
+                PopularPlaylistResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
+            });
+
+            PopularPlaylists.ItemsSource = PopularPlaylistResults;
+
+             await Task.Run(async () =>
+             {
+            var playlistClient = new PlaylistSearch();
+            var playlists = await playlistClient.GetPlaylists("eminem", 1);
+            EminemResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
+             });
+
+            EminemPlaylists.ItemsSource = EminemResults;
+        }
+
+        public async Task GetEminemSongs()
+        {
+           // await Task.Run(async () =>
+           // {
+                var playlistClient = new PlaylistSearch();
+                var playlists = await playlistClient.GetPlaylists("eminem", 1);
+                EminemResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
+           // });
+
+            EminemPlaylists.ItemsSource = EminemResults;
         }
 
         public async void SearchButtonPressed_Handler(object sender, System.EventArgs e)
@@ -36,6 +75,13 @@ namespace Android_Music_App
             var item = (PlaylistObject)e.SelectedItem;
 
             await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(item)));
+        }
+
+        private async void SongPickedFromList(object sender, SelectionChangedEventArgs e)
+        {
+            var selection = e.CurrentSelection.FirstOrDefault() as PlaylistObject;
+
+            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(selection)));
         }
     }
 }

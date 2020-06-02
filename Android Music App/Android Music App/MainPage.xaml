@@ -2,35 +2,94 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:renderedViews="clr-namespace:Sharpnado.Presentation.Forms.RenderedViews;assembly=Sharpnado.Presentation.Forms"
              mc:Ignorable="d"
              NavigationPage.HasNavigationBar="False"
              x:Class="Android_Music_App.MainPage">
 
-    <StackLayout>
-        <SearchBar x:Name="MusicSearchBar" TextColor="#ffffff" PlaceholderColor="#ffffff" CancelButtonColor="#ffffff"
+        <StackLayout Padding="10">
+            <SearchBar x:Name="MusicSearchBar" TextColor="#ffffff" PlaceholderColor="#ffffff" CancelButtonColor="#ffffff"
             SearchButtonPressed="SearchButtonPressed_Handler"
             Placeholder="Search music" />
 
-        <ListView x:Name="MusicResults" ItemsSource="{Binding YoutubeSearchResults}" RowHeight="100" ItemSelected="SongPickedByUser">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Vertical" Padding="5">
-                            <StackLayout Orientation="Horizontal">
-                                <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100"/>
-                                <StackLayout Orientation="Vertical">
-                                    <Label Text="{Binding Title}"/>
-                                    <Label Text="{Binding VideoCount}"/>
+            <!--Search results-->
+            <ListView x:Name="MusicResults" ItemsSource="{Binding YoutubeSearchResults}" RowHeight="100" ItemSelected="SongPickedByUser">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Vertical" Padding="5">
+                                <StackLayout Orientation="Horizontal">
+                                    <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100"/>
+                                    <StackLayout Orientation="Vertical">
+                                        <Label Text="{Binding Title}" TextColor="White"/>
+                                        <Label Text="{Binding VideoCount}" TextColor="White"/>
+                                    </StackLayout>
                                 </StackLayout>
                             </StackLayout>
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <!--Recently Played-->
+            <Label Text="Recently Played" FontSize="Large" TextColor="White" Padding="10,10,0,0"/>
+            <CollectionView x:Name="EminemPlaylists" ItemsSource="{Binding EminemResults}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="SongPickedFromList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10" Margin="12" WidthRequest="120">
+                            <Image Source="{Binding ImageSource}"
+                               Grid.Row="0"
+                               Aspect="AspectFill"/>
+
+                            <StackLayout Grid.Row="1">
+                                <Label Grid.Column="1"
+                                   VerticalOptions="Center"
+                                   TextColor="White"
+                                   Text="{Binding Title}"
+                                   FontAttributes="Bold" />
+
+                                <Label Text="{Binding VideoCount}"
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+                                   TextColor="White"
+                                   VerticalOptions="Start"
+                                   FontAttributes="Italic" />
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!--Popular-->
+            <Label Text="Popular Playlists" FontSize="Large" TextColor="White" Padding="10,10,0,0"/>
+            <CollectionView x:Name="PopularPlaylists" ItemsSource="{Binding PopularPlaylistResults}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="SongPickedFromList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10" Margin="12" WidthRequest="120">
+                            <Image Source="{Binding ImageSource}"
+                               Grid.Row="0"
+                               Aspect="AspectFill"/>
+
+                            <StackLayout Grid.Row="1">
+                                <Label Grid.Column="1"
+                                   VerticalOptions="Center"
+                                   TextColor="White"
+                                   Text="{Binding Title}"
+                                   FontAttributes="Bold" />
+
+                                <Label Text="{Binding VideoCount}"
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+                                   TextColor="White"
+                                   VerticalOptions="Start"
+                                   FontAttributes="Italic" />
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
 
-    </StackLayout>
-
+        </StackLayout>
 </ContentPage>
