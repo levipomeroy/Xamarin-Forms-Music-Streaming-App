@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              NavigationPage.HasNavigationBar="False"
              x:Class="Android_Music_App.MainPage">
-
+    <!--<ScrollView HeightRequest="3000">-->
         <StackLayout Padding="10">
             <SearchBar x:Name="MusicSearchBar" TextColor="#ffffff" PlaceholderColor="#ffffff" CancelButtonColor="#ffffff"
             SearchButtonPressed="SearchButtonPressed_Handler"
@@ -92,4 +92,5 @@
 
 
         </StackLayout>
+    <!--</ScrollView>-->
 </ContentPage>

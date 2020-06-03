@@ -1,5 +1,6 @@
 ﻿using Android_Music_App.Models;
 using Android_Music_App.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -19,13 +20,19 @@ namespace Android_Music_App
         public MainPage()
         {
             InitializeComponent();
-            SongFileManager.InitFolder();
-            SongFileManager.CleanUpMusicFolder();
-            // Task.Run(() => GetPopularSongs());
-            GetPopularSongs();
-            //GetEminemSongs();
-
+            try
+            {
+                SongFileManager.InitFolder();
+                SongFileManager.CleanUpMusicFolder();
+                // Task.Run(() => GetPopularSongs());
+                GetPopularSongs();
+                //GetEminemSongs();
              BindingContext = new PlaylistObject();
+            }
+            catch(Exception ex)
+            {
+                Logger.Error("Error setting up home page", ex);
+            }
         }
 
         public async Task GetPopularSongs()
@@ -33,33 +40,34 @@ namespace Android_Music_App
             await Task.Run(async () =>
             {
                 var playlistClient = new PlaylistSearch();
-                var playlists = await playlistClient.GetPlaylists("top popular song playlists", 1);
+                var playlists = await playlistClient.GetPlaylists("top popular hits", 1);
                 PopularPlaylistResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
             });
 
             PopularPlaylists.ItemsSource = PopularPlaylistResults;
 
-             await Task.Run(async () =>
-             {
-            var playlistClient = new PlaylistSearch();
-            var playlists = await playlistClient.GetPlaylists("eminem", 1);
-            EminemResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
-             });
-
-            EminemPlaylists.ItemsSource = EminemResults;
-        }
-
-        public async Task GetEminemSongs()
-        {
-           // await Task.Run(async () =>
-           // {
+            await Task.Run(async () =>
+            {
                 var playlistClient = new PlaylistSearch();
                 var playlists = await playlistClient.GetPlaylists("eminem", 1);
                 EminemResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
-           // });
+            });
 
             EminemPlaylists.ItemsSource = EminemResults;
+            Logger.Info("Gathering main page playlists complete");
         }
+
+        //public async Task GetEminemSongs()
+        //{
+        //   // await Task.Run(async () =>
+        //   // {
+        //        var playlistClient = new PlaylistSearch();
+        //        var playlists = await playlistClient.GetPlaylists("eminem", 1);
+        //        EminemResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
+        //   // });
+
+        //    EminemPlaylists.ItemsSource = EminemResults;
+        //}
 
         public async void SearchButtonPressed_Handler(object sender, System.EventArgs e)
         {

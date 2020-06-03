@@ -27,33 +27,46 @@ namespace Android_Music_App
         int _tickCount;
         int _downloadedCount;
         int _playedCount;
-        private const string FILE_DIR = "/storage/emulated/0/MusicQueue/";
+        private const string FILE_DIR = "/storage/emulated/0/MusicApp/Queue/";
 
         public MediaPlayerPage(PlaylistObject selectedItem)
         {
-            _selectedPlayList = selectedItem;
-            _mediaPlayer = _mediaPlayer ?? new MediaPlayer();
-            _songsInPlayList = new Stack<SearchResultsObject>();
+            try
+            {
+                _selectedPlayList = selectedItem;
+                _mediaPlayer = _mediaPlayer ?? new MediaPlayer();
+                _songsInPlayList = new Stack<SearchResultsObject>();
 
-            _tickCount = 0;
-            _timer = new Timer();
-            _timer.Interval = 1000; // 1 second
-            _timer.Elapsed += TimeElapsedHandler;
+                _tickCount = 0;
+                _timer = new Timer();
+                _timer.Interval = 1000; // 1 second
+                _timer.Elapsed += TimeElapsedHandler;
 
-            InitializeComponent();
-            InitPlaylist();
+                InitializeComponent();
+                InitPlaylist();
 
-            _mediaPlayer.Looping = false;
-            _mediaPlayer.Completion += OnCompleteHandler;
+                _mediaPlayer.Looping = false;
+                _mediaPlayer.Completion += OnCompleteHandler;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Generic error from media player page", ex);
+            }
         }
-
 
         //Set up
         public async void InitPlaylist()
         {
-            await GetSongsInPlaylist(_selectedPlayList.Url);
-            await GetFirstSong();
-            await GetNextSectionOfSongsInPlaylist();
+            try
+            {
+                await GetSongsInPlaylist(_selectedPlayList.Url);
+                await GetFirstSong();
+                await GetNextSectionOfSongsInPlaylist();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error setting up media player page", ex);
+            }
         }
 
         private async Task GetSongsInPlaylist(string playListUrl)
@@ -77,7 +90,7 @@ namespace Android_Music_App
         //continue to download songs
         public async Task GetNextSectionOfSongsInPlaylist()
         {
-            for (int i =0; i < 10 && i < _songsInPlayList.Count(); i++)
+            for (int i = 0; i < 10 && i < _songsInPlayList.Count(); i++)
             {
                 await SongFileManager.DownloadSingleSong(_songsInPlayList.GetItemByIndex(i));
                 _downloadedCount++;
@@ -88,13 +101,20 @@ namespace Android_Music_App
         //UI update
         private void TimeElapsedHandler(object sender, ElapsedEventArgs e)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            try
             {
-                CurrentTime.Text = SongTimeFormat(_tickCount);
-                TimeProgressBar.Progress = Convert.ToDouble(_tickCount) / (_mediaPlayer.Duration / 1000);
-            });
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    CurrentTime.Text = SongTimeFormat(_tickCount);
+                    TimeProgressBar.Progress = Convert.ToDouble(_tickCount) / (_mediaPlayer.Duration / 1000);
+                });
 
-            _tickCount++;
+                _tickCount++;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error updating the timer and progress UI", ex);
+            }
         }
 
 
@@ -112,12 +132,19 @@ namespace Android_Music_App
 
         public async Task Next()
         {
-            _selectedItem = _songsInPlayList.Pop(); //get next song
-
-            await PlaySelectedSong();
-            if (_downloadedCount - _playedCount <= 2) //only 2 or less left on ready stack
+            try
             {
-                await GetNextSectionOfSongsInPlaylist(); //get more songs 
+                _selectedItem = _songsInPlayList.Pop(); //get next song
+
+                await PlaySelectedSong();
+                if (_downloadedCount - _playedCount <= 2) //only 2 or less left on ready stack
+                {
+                    await GetNextSectionOfSongsInPlaylist(); //get more songs 
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error getting next song", ex);
             }
         }
 
@@ -143,31 +170,38 @@ namespace Android_Music_App
 
         private async Task PlaySelectedSong()
         {
-            _playedCount++;
-            //set up media player for song
-            if (_mediaPlayer.IsPlaying)
+            try
             {
-                _mediaPlayer.Stop();
-                _mediaPlayer.Reset();
-            }
-            var fileName = Directory.GetFiles(FILE_DIR).FirstOrDefault(x => Path.GetFileName(x).Contains(_selectedItem.Id));
-            var filePath = Path.Combine(FILE_DIR, fileName);
-            await _mediaPlayer.SetDataSourceAsync(filePath);
-            _mediaPlayer.Prepare();
-            _mediaPlayer.Start();
-            _timer.Start();
+                _playedCount++;
+                //set up media player for song
+                if (_mediaPlayer.IsPlaying)
+                {
+                    _mediaPlayer.Stop();
+                    _mediaPlayer.Reset();
+                }
+                var fileName = Directory.GetFiles(FILE_DIR).FirstOrDefault(x => Path.GetFileName(x).Contains(_selectedItem.Id));
+                var filePath = Path.Combine(FILE_DIR, fileName);
+                await _mediaPlayer.SetDataSourceAsync(filePath);
+                _mediaPlayer.Prepare();
+                _mediaPlayer.Start();
+                _timer.Start();
 
-            //update song info
-            _tickCount = 0;
-            Device.BeginInvokeOnMainThread(() =>
+                //update song info
+                _tickCount = 0;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    CurrentTime.Text = SongTimeFormat(_tickCount);
+                    TimeProgressBar.Progress = 0;
+                    SongTitle.Text = _selectedItem.Title;
+                    SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
+                    SongImage.Source = _selectedItem.ImageSource;
+                    PlayOrPauseButton.Text = "\U000f03e5"; //pause button
+                });
+            }
+            catch (Exception ex)
             {
-                CurrentTime.Text = SongTimeFormat(_tickCount);
-                TimeProgressBar.Progress = 0;
-                SongTitle.Text = _selectedItem.Title;
-                SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
-                SongImage.Source = _selectedItem.ImageSource;
-                PlayOrPauseButton.Text = "\U000f03e5"; //pause button
-            });
+                Logger.Error("Error playing selected song", ex);
+            }
         }
 
 

@@ -9,7 +9,7 @@ namespace Android_Music_App.Services
 {
     public static class SongFileManager
     {
-        private const string FILE_DIR = "/storage/emulated/0/MusicQueue/";
+        private const string FILE_DIR = "/storage/emulated/0/MusicApp/Queue/";
         public static async Task DownloadSingleSong(SearchResultsObject song)
         {
             if (!Directory.GetFiles(FILE_DIR).Any(x => Path.GetFileName(x).Contains(song.Id.ToString()))) //if not already downloaded

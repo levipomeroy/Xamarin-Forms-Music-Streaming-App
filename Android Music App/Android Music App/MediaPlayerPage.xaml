@@ -11,7 +11,7 @@
 
     <ContentPage.Content>
 
-        <StackLayout Orientation="Vertical">
+        <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand">
 
             <StackLayout  Padding="30">
                 <Image x:Name="SongImage" Source="https://i.dlpng.com/static/png/6805178_preview.png" 
