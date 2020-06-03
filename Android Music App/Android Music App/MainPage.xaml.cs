@@ -15,7 +15,7 @@ namespace Android_Music_App
     {
         private ObservableCollection<PlaylistObject> YoutubeSearchResults;
         private ObservableCollection<PlaylistObject> PopularPlaylistResults;
-        private ObservableCollection<PlaylistObject> EminemResults;
+        private ObservableCollection<PlaylistObject> RecentlyPlayedPlaylists;
 
         public MainPage()
         {
@@ -27,7 +27,8 @@ namespace Android_Music_App
                 // Task.Run(() => GetPopularSongs());
                 GetPopularSongs();
                 //GetEminemSongs();
-             BindingContext = new PlaylistObject();
+
+                BindingContext = new PlaylistObject();
             }
             catch(Exception ex)
             {
@@ -46,28 +47,10 @@ namespace Android_Music_App
 
             PopularPlaylists.ItemsSource = PopularPlaylistResults;
 
-            await Task.Run(async () =>
-            {
-                var playlistClient = new PlaylistSearch();
-                var playlists = await playlistClient.GetPlaylists("eminem", 1);
-                EminemResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
-            });
+            RecentlyPlayedPlaylists = new ObservableCollection<PlaylistObject>(RecentlyPlayed.GetPlaylists());
 
-            EminemPlaylists.ItemsSource = EminemResults;
-            Logger.Info("Gathering main page playlists complete");
+            EminemPlaylists.ItemsSource = RecentlyPlayedPlaylists;
         }
-
-        //public async Task GetEminemSongs()
-        //{
-        //   // await Task.Run(async () =>
-        //   // {
-        //        var playlistClient = new PlaylistSearch();
-        //        var playlists = await playlistClient.GetPlaylists("eminem", 1);
-        //        EminemResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
-        //   // });
-
-        //    EminemPlaylists.ItemsSource = EminemResults;
-        //}
 
         public async void SearchButtonPressed_Handler(object sender, System.EventArgs e)
         {
@@ -80,14 +63,16 @@ namespace Android_Music_App
 
         private async void SongPickedByUser(object sender, SelectedItemChangedEventArgs e)
         {
-            var item = (PlaylistObject)e.SelectedItem;
+            var selection = (PlaylistObject)e.SelectedItem;
+            RecentlyPlayed.AddPlaylist(selection);
 
-            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(item)));
+            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(selection)));
         }
 
         private async void SongPickedFromList(object sender, SelectionChangedEventArgs e)
         {
             var selection = e.CurrentSelection.FirstOrDefault() as PlaylistObject;
+            RecentlyPlayed.AddPlaylist(selection);
 
             await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(selection)));
         }
