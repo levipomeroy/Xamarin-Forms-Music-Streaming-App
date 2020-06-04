@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Android_Music_App.Services
 {
@@ -16,7 +17,11 @@ namespace Android_Music_App.Services
             var fullPath = FILE_DIR + FILE_NAME;
 
             var playlists = GetPlaylists();
-            playlists.Add(sel);
+            if (playlists.Any(x => x.Id == sel.Id))  //remove if already in list and readd to refresh spot in list
+            {
+                playlists.Remove(playlists.FirstOrDefault(x => x.Id == sel.Id));
+            }
+            playlists.Insert(0, sel); //add playlist to beginning of list 
             var serializedPlaylists = JsonConvert.SerializeObject(playlists);
 
             File.WriteAllText(fullPath, serializedPlaylists);

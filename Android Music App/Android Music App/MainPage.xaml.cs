@@ -24,9 +24,8 @@ namespace Android_Music_App
             {
                 SongFileManager.InitFolder();
                 SongFileManager.CleanUpMusicFolder();
-                // Task.Run(() => GetPopularSongs());
+  
                 GetPopularSongs();
-                //GetEminemSongs();
 
                 BindingContext = new PlaylistObject();
             }
@@ -34,6 +33,15 @@ namespace Android_Music_App
             {
                 Logger.Error("Error setting up home page", ex);
             }
+        }
+
+        protected override void OnAppearing() //on page load
+        {
+            base.OnAppearing();
+
+            //Update the recently played playlists
+            RecentlyPlayedPlaylists = new ObservableCollection<PlaylistObject>(RecentlyPlayed.GetPlaylists());
+            RecentlyPlayedPlaylistsUIObj.ItemsSource = RecentlyPlayedPlaylists;
         }
 
         public async Task GetPopularSongs()
@@ -49,7 +57,7 @@ namespace Android_Music_App
 
             RecentlyPlayedPlaylists = new ObservableCollection<PlaylistObject>(RecentlyPlayed.GetPlaylists());
 
-            EminemPlaylists.ItemsSource = RecentlyPlayedPlaylists;
+            RecentlyPlayedPlaylistsUIObj.ItemsSource = RecentlyPlayedPlaylists;
         }
 
         public async void SearchButtonPressed_Handler(object sender, System.EventArgs e)

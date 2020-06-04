@@ -7,6 +7,11 @@
              x:Class="Android_Music_App.App">
     <Application.Resources>
 
+        <!--<OnPlatform x:Key="AppFont" x:TypeArguments="x:String">
+            <On Platform="iOS" Value="YellowPeasDemo-v2Yy" />
+            <On Platform="Android" Value="YellowPeasDemo-v2Yy.ttf#YellowPeasDemo-v2Yy" />
+        </OnPlatform>-->
+
         <OnPlatform x:Key="Material" x:TypeArguments="x:String">
             <On Platform="iOS" Value="Material Design Icons" />
             <On Platform="Android" Value="materialdesignicons-webfont.ttf#Material Design Icons" />
@@ -18,6 +23,10 @@
             <Setter Property="VerticalOptions" Value="Center"/>
             <Setter Property="TextColor" Value="White"/>
             <Setter Property="BackgroundColor" Value="Transparent"/>
+        </Style>
+
+        <Style TargetType="{x:Type Label}" x:Key="app-font">
+            <Setter Property="FontFamily" Value="Microsoft YaHei"/>
         </Style>
 
         <!--<Style TargetType="NavigationPage">
