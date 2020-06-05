@@ -73,6 +73,7 @@ namespace Android_Music_App
         {
             var songsInPlayListClient = new PlaylistItemsSearch();
             var songs = await songsInPlayListClient.GetPlaylistItems(playListUrl);
+            songs.Shuffle();
             _songsInPlayList = new Stack<SearchResultsObject>(songs.Select(x => new SearchResultsObject(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
         }
 
@@ -177,8 +178,9 @@ namespace Android_Music_App
                 if (_mediaPlayer.IsPlaying)
                 {
                     _mediaPlayer.Stop();
-                    _mediaPlayer.Reset();
                 }
+                _mediaPlayer.Reset();
+
                 var fileName = Directory.GetFiles(FILE_DIR).FirstOrDefault(x => Path.GetFileName(x).Contains(_selectedItem.Id));
                 var filePath = Path.Combine(FILE_DIR, fileName);
                 await _mediaPlayer.SetDataSourceAsync(filePath);
@@ -202,6 +204,16 @@ namespace Android_Music_App
             {
                 Logger.Error("Error playing selected song", ex);
             }
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            _mediaPlayer.Stop();
+            _timer.Stop();
+            _mediaPlayer.Reset();
+            _mediaPlayer.Release();
         }
 
 

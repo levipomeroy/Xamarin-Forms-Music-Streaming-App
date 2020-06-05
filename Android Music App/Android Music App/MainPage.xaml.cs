@@ -50,6 +50,7 @@ namespace Android_Music_App
             {
                 var playlistClient = new PlaylistSearch();
                 var playlists = await playlistClient.GetPlaylists("top popular hits", 1);
+                playlists.Shuffle();
                 PopularPlaylistResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
             });
 
