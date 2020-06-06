@@ -24,10 +24,10 @@
             <StackLayout Orientation="Vertical" Padding="30,0,30,0" HorizontalOptions="Center">
                 <Label x:Name="SongTitle" Text="Song name Placeholder" HorizontalTextAlignment="Center"
                     VerticalOptions="CenterAndExpand" 
-                    HorizontalOptions="Center" FontSize="Title" TextColor="#ffffff" />
-                <Label Text="Artist - Album" 
+                    HorizontalOptions="Center" FontSize="Title" TextColor="White" />
+                <Label x:Name="Artist" Text="Artist" IsVisible="False"
                     VerticalOptions="CenterAndExpand" 
-                    HorizontalOptions="Center" FontSize="Subtitle" TextColor="#ffffff" />
+                    HorizontalOptions="Center" FontSize="Subtitle" TextColor="LightGray" />
             </StackLayout>
 
             <StackLayout Padding="30,0,30,0">

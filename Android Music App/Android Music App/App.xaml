@@ -29,11 +29,5 @@
             <Setter Property="FontFamily" Value="Microsoft YaHei"/>
         </Style>
 
-        <!--<Style TargetType="NavigationPage">
-            <Setter Property="BarBackgroundColor" Value="Black"/>
-            <Setter Property="BarTextColor" Value="White"/>
-        </Style>-->
-
-
     </Application.Resources>
 </Application>

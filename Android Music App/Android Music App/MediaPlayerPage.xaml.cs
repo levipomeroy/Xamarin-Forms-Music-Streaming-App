@@ -1,4 +1,5 @@
 ﻿using Android.Media;
+using Android.Opengl;
 using Android_Music_App.Models;
 using Android_Music_App.Services;
 using AngleSharp.Common;
@@ -10,7 +11,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Web;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
 using YouTubeSearch;
 
@@ -50,7 +50,7 @@ namespace Android_Music_App
             }
             catch (Exception ex)
             {
-                Logger.Error("Generic error from media player page", ex);
+                FileManager.LogError("Generic error from media player page", ex);
             }
         }
 
@@ -65,7 +65,7 @@ namespace Android_Music_App
             }
             catch (Exception ex)
             {
-                Logger.Error("Error setting up media player page", ex);
+                FileManager.LogError("Error setting up media player page", ex);
             }
         }
 
@@ -80,7 +80,7 @@ namespace Android_Music_App
         private async Task GetFirstSong()
         {
             _selectedItem = _songsInPlayList.FirstOrDefault();
-            await SongFileManager.DownloadSingleSong(_selectedItem);
+            await FileManager.DownloadSingleSong(_selectedItem);
             _downloadedCount++;
             await PlaySelectedSong();
 
@@ -88,18 +88,8 @@ namespace Android_Music_App
         }
 
 
-        //continue to download songs
-        public async Task GetNextSectionOfSongsInPlaylist()
-        {
-            for (int i = 0; i < 10 && i < _songsInPlayList.Count(); i++)
-            {
-                await SongFileManager.DownloadSingleSong(_songsInPlayList.GetItemByIndex(i));
-                _downloadedCount++;
-            }
-        }
 
-
-        //UI update
+        //Handlers 
         private void TimeElapsedHandler(object sender, ElapsedEventArgs e)
         {
             try
@@ -114,12 +104,10 @@ namespace Android_Music_App
             }
             catch (Exception ex)
             {
-                Logger.Error("Error updating the timer and progress UI", ex);
+                FileManager.LogError("Error updating the timer and progress UI", ex);
             }
         }
 
-
-        //Next Song 
         private async void OnCompleteHandler(object sender, EventArgs e)
         {
             _mediaPlayer.Reset();
@@ -131,26 +119,6 @@ namespace Android_Music_App
             await Next();
         }
 
-        public async Task Next()
-        {
-            try
-            {
-                _selectedItem = _songsInPlayList.Pop(); //get next song
-
-                await PlaySelectedSong();
-                if (_downloadedCount - _playedCount <= 2) //only 2 or less left on ready stack
-                {
-                    await GetNextSectionOfSongsInPlaylist(); //get more songs 
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Error getting next song", ex);
-            }
-        }
-
-
-        //Pause & play
         private void PlayPausedClicked(object sender, EventArgs e)
         {
             if (_mediaPlayer.IsPlaying)
@@ -166,6 +134,36 @@ namespace Android_Music_App
                 _timer.Start();
 
                 PlayOrPauseButton.Text = "\U000f03e5"; //pause button
+            }
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            _mediaPlayer.Stop();
+            _timer.Stop();
+            _mediaPlayer.Reset();
+            _mediaPlayer.Release();
+        }
+
+
+        //support
+        public async Task Next()
+        {
+            try
+            {
+                _selectedItem = _songsInPlayList.Pop(); //get next song
+
+                await PlaySelectedSong();
+                if (_downloadedCount - _playedCount <= 2) //only 2 or less left on ready stack
+                {
+                    await GetNextSectionOfSongsInPlaylist(); //get more songs 
+                }
+            }
+            catch (Exception ex)
+            {
+                FileManager.LogError("Error getting next song", ex);
             }
         }
 
@@ -194,7 +192,13 @@ namespace Android_Music_App
                 {
                     CurrentTime.Text = SongTimeFormat(_tickCount);
                     TimeProgressBar.Progress = 0;
-                    SongTitle.Text = _selectedItem.Title;
+                    var artist = _selectedItem.Title.GetArtistName();
+                    if (!string.IsNullOrWhiteSpace(artist))
+                    {
+                        Artist.Text = artist;
+                        Artist.IsVisible = true;
+                    }
+                    SongTitle.Text = _selectedItem.Title.Replace($"{artist}-", string.Empty).CleanTitle();
                     SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
                     SongImage.Source = _selectedItem.ImageSource;
                     PlayOrPauseButton.Text = "\U000f03e5"; //pause button
@@ -202,19 +206,19 @@ namespace Android_Music_App
             }
             catch (Exception ex)
             {
-                Logger.Error("Error playing selected song", ex);
+                FileManager.LogError("Error playing selected song", ex);
             }
         }
 
-        protected override void OnDisappearing()
+        public async Task GetNextSectionOfSongsInPlaylist()
         {
-            base.OnDisappearing();
-
-            _mediaPlayer.Stop();
-            _timer.Stop();
-            _mediaPlayer.Reset();
-            _mediaPlayer.Release();
+            for (int i = 0; i < 10 && i < _songsInPlayList.Count(); i++)
+            {
+                await FileManager.DownloadSingleSong(_songsInPlayList.GetItemByIndex(i));
+                _downloadedCount++;
+            }
         }
+
 
 
         //helper methods

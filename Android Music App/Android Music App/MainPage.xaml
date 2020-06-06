@@ -11,10 +11,11 @@
     <StackLayout Padding="10">
         <SearchBar x:Name="MusicSearchBar" TextColor="#ffffff" PlaceholderColor="#ffffff" CancelButtonColor="#ffffff" 
             SearchButtonPressed="SearchButtonPressed_Handler"
+            TextChanged="SearchBarOnTextChanged"
             Placeholder="Search music" />
 
         <!--Search results-->
-        <ListView x:Name="MusicResults" ItemsSource="{Binding YoutubeSearchResults}" RowHeight="100" ItemSelected="SongPickedByUser">
+        <ListView x:Name="MusicResults" ItemsSource="{Binding YoutubeSearchResults}" RowHeight="100" ItemSelected="SongPickedByUser" IsVisible="False">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -32,6 +33,7 @@
             </ListView.ItemTemplate>
         </ListView>
 
+        <StackLayout x:Name="MusicDiscovery" Orientation="Vertical" IsVisible="True">
         <!--Recently Played-->
         <Label FontFamily="{StaticResource app-font}" Text="Recently Played" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
         <CollectionView x:Name="RecentlyPlayedPlaylistsUIObj" ItemsSource="{Binding RecentlyPlayedPlaylists}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="SongPickedFromList">
@@ -92,7 +94,7 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
+        </StackLayout>
 
     </StackLayout>
     <!--</ScrollView>-->

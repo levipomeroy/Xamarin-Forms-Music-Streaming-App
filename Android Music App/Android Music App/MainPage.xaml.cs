@@ -22,8 +22,8 @@ namespace Android_Music_App
             InitializeComponent();
             try
             {
-                SongFileManager.InitFolder();
-                SongFileManager.CleanUpMusicFolder();
+                FileManager.InitFolders();
+                FileManager.CleanUpMusicFolder();
   
                 GetPopularSongs();
 
@@ -31,7 +31,7 @@ namespace Android_Music_App
             }
             catch(Exception ex)
             {
-                Logger.Error("Error setting up home page", ex);
+                FileManager.LogError("Error setting up home page", ex);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Android_Music_App
             base.OnAppearing();
 
             //Update the recently played playlists
-            RecentlyPlayedPlaylists = new ObservableCollection<PlaylistObject>(RecentlyPlayed.GetPlaylists());
+            RecentlyPlayedPlaylists = new ObservableCollection<PlaylistObject>(FileManager.GetPlaylists());
             RecentlyPlayedPlaylistsUIObj.ItemsSource = RecentlyPlayedPlaylists;
         }
 
@@ -51,12 +51,12 @@ namespace Android_Music_App
                 var playlistClient = new PlaylistSearch();
                 var playlists = await playlistClient.GetPlaylists("top popular hits", 1);
                 playlists.Shuffle();
-                PopularPlaylistResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
+                PopularPlaylistResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle().CleanTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
             });
 
             PopularPlaylists.ItemsSource = PopularPlaylistResults;
 
-            RecentlyPlayedPlaylists = new ObservableCollection<PlaylistObject>(RecentlyPlayed.GetPlaylists());
+            RecentlyPlayedPlaylists = new ObservableCollection<PlaylistObject>(FileManager.GetPlaylists());
 
             RecentlyPlayedPlaylistsUIObj.ItemsSource = RecentlyPlayedPlaylists;
         }
@@ -68,12 +68,14 @@ namespace Android_Music_App
             YoutubeSearchResults = new ObservableCollection<PlaylistObject>(playlists.Select(x=> new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
 
             MusicResults.ItemsSource = YoutubeSearchResults;
+            MusicResults.IsVisible = true; //show search results
+            MusicDiscovery.IsVisible = false; //hide music discovery
         }
 
         private async void SongPickedByUser(object sender, SelectedItemChangedEventArgs e)
         {
             var selection = (PlaylistObject)e.SelectedItem;
-            RecentlyPlayed.AddPlaylist(selection);
+            FileManager.AddPlaylist(selection);
 
             await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(selection)));
         }
@@ -81,9 +83,20 @@ namespace Android_Music_App
         private async void SongPickedFromList(object sender, SelectionChangedEventArgs e)
         {
             var selection = e.CurrentSelection.FirstOrDefault() as PlaylistObject;
-            RecentlyPlayed.AddPlaylist(selection);
+            FileManager.AddPlaylist(selection);
 
             await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(selection)));
+        }
+
+        private void SearchBarOnTextChanged(object sender, TextChangedEventArgs textChangedEventArgs)
+        {
+            if (string.IsNullOrWhiteSpace(textChangedEventArgs.NewTextValue)) //new text is empty
+            {
+                YoutubeSearchResults = null; //reset search results
+                MusicResults.ItemsSource = YoutubeSearchResults; //update listView
+                MusicResults.IsVisible = false; //hide search results
+                MusicDiscovery.IsVisible = true; //show music discovery
+            }
         }
     }
 }
