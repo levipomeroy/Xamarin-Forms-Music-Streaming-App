@@ -27,14 +27,19 @@ namespace Android_Music_App.Services
         {
             //Remove parathesis 
             title = Regex.Replace(title, @"\([^()]*\)", string.Empty);
+            //Remove brackets
+            title = Regex.Replace(title, @"\[.*?\]", string.Empty);
             //Convert to title case 
             title = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title.ToLower());
             //remove emojis and junk 
             title = Regex.Replace(title, @"[^\u0000-\u007F]+", "");
             //standardize seperator 
             title = Regex.Replace(title, "[+|:]", " - ");
+            //show ampersand correctly
+            title = title.Replace("/U0026", "&");
             //remove multiple spaces
             title = Regex.Replace(title, @"\s+", " ");
+            title = title.Trim();
 
             return title;
         }

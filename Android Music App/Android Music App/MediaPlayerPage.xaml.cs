@@ -29,7 +29,7 @@ namespace Android_Music_App
         int _playedCount;
         private const string FILE_DIR = "/storage/emulated/0/MusicApp/Queue/";
 
-        public MediaPlayerPage(PlaylistObject selectedItem)
+        public MediaPlayerPage(PlaylistObject selectedItem, Stack<SearchResultsObject> knownPlaylist = null)
         {
             try
             {
@@ -42,11 +42,18 @@ namespace Android_Music_App
                 _timer.Interval = 1000; // 1 second
                 _timer.Elapsed += TimeElapsedHandler;
 
-                InitializeComponent();
-                InitPlaylist();
-
                 _mediaPlayer.Looping = false;
                 _mediaPlayer.Completion += OnCompleteHandler;
+
+                InitializeComponent();
+                if (knownPlaylist == null)
+                {
+                    InitPlaylist();
+                }
+                else
+                {
+                    StartKnownPlaylist(knownPlaylist);
+                }
             }
             catch (Exception ex)
             {
@@ -67,6 +74,17 @@ namespace Android_Music_App
             {
                 FileManager.LogError("Error setting up media player page", ex);
             }
+        }
+
+        public async void StartKnownPlaylist(Stack<SearchResultsObject> knownPlaylist)
+        {
+            _songsInPlayList = knownPlaylist;
+            _selectedItem = _songsInPlayList.FirstOrDefault();
+            await FileManager.DownloadSingleSong(_selectedItem);
+            _downloadedCount++;
+            await PlaySelectedSong();
+
+            _songsInPlayList.Pop(); //already set to play
         }
 
         private async Task GetSongsInPlaylist(string playListUrl)
@@ -147,6 +165,37 @@ namespace Android_Music_App
             _mediaPlayer.Release();
         }
 
+        private void SaveSongClicked(object sender, EventArgs e)
+        {
+            if(FileManager.IsSongSaved(_selectedItem))
+            {
+                FileManager.UnSaveSong(_selectedItem);
+                HeartSong.Text = "\U000f02d5"; //heart outline
+            }
+            else
+            {
+                FileManager.SaveSong(_selectedItem);
+                HeartSong.Text = "\U000f02d1"; //filled in heart
+            }
+        }
+
+        private void RestartClicked(object sender, EventArgs e)
+        {
+            _mediaPlayer.SeekTo(0);
+            _tickCount = 0;
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                CurrentTime.Text = SongTimeFormat(_tickCount);
+                TimeProgressBar.Progress = Convert.ToDouble(_tickCount) / (_mediaPlayer.Duration / 1000);
+            });
+
+            if (_mediaPlayer.IsPlaying)
+            {
+                _mediaPlayer.Start();
+            }
+        }
+
 
         //support
         public async Task Next()
@@ -202,6 +251,15 @@ namespace Android_Music_App
                     SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
                     SongImage.Source = _selectedItem.ImageSource;
                     PlayOrPauseButton.Text = "\U000f03e5"; //pause button
+                    if (FileManager.IsSongSaved(_selectedItem))
+                    {
+                        HeartSong.Text = "\U000f02d1"; //filled in heart
+                    }
+                    else
+                    {
+                        HeartSong.Text = "\U000f02d5"; //heart outline
+
+                    }
                 });
             }
             catch (Exception ex)

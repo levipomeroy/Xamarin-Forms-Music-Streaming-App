@@ -20,6 +20,7 @@ namespace Android_Music_App.Services
 
         private const string SAVED_FOLDER = "Saved/";
         private const string RECENTLY_PLAYED_PLAYLISTS_FILE_NAME = "RecentlyPlayedPlaylists.txt";
+        private const string SAVED_SONGS = "SavedSongs.txt";
 
         public static void InitFolders()
         {
@@ -28,6 +29,7 @@ namespace Android_Music_App.Services
             Directory.CreateDirectory(BASE_DIR + SAVED_FOLDER); //Create saved folder for playlists and songs
         }
 
+        
         //Music management methods
         public static async Task DownloadSingleSong(SearchResultsObject song)
         {
@@ -69,6 +71,7 @@ namespace Android_Music_App.Services
             }
         }
 
+        
         //Logging methods 
         public static void LogInfo(string message)
         {
@@ -112,11 +115,8 @@ namespace Android_Music_App.Services
             }
         }
 
-
-
-
-
-
+        
+        //Recently Played playlist methods
         public static void AddPlaylist(PlaylistObject sel)
         {
             var fullPath = BASE_DIR + SAVED_FOLDER + RECENTLY_PLAYED_PLAYLISTS_FILE_NAME;
@@ -125,6 +125,11 @@ namespace Android_Music_App.Services
             if (playlists.Any(x => x.Id == sel.Id))  //remove if already in list and readd to refresh spot in list
             {
                 playlists.Remove(playlists.FirstOrDefault(x => x.Id == sel.Id));
+            }
+
+            if(playlists.Count >= 20) //keep 20 last played only
+            {
+                playlists.Remove(playlists.LastOrDefault());
             }
 
             sel.Title = sel.Title.CleanTitle(); // clean it before writing it
@@ -150,5 +155,58 @@ namespace Android_Music_App.Services
         }
 
 
+        //Saved songs methods
+        public static void SaveSong(SearchResultsObject song)
+        {
+            var fullPath = BASE_DIR + SAVED_FOLDER + SAVED_SONGS;
+
+            var savedSongs = GetSavedSongs();
+            if (!savedSongs.Any(x => x.Id == song.Id))  //if not already saved
+            {
+                song.Title = song.Title.CleanTitle();  // clean it before writing it
+                savedSongs.Insert(0, song); //add newly liked songs to beggining
+            }
+
+            var serializedPlaylists = JsonConvert.SerializeObject(savedSongs);
+
+            File.WriteAllText(fullPath, serializedPlaylists);
+        }
+
+        public static List<SearchResultsObject> GetSavedSongs()
+        {
+            var fullPath = BASE_DIR + SAVED_FOLDER + SAVED_SONGS;
+
+            if (!File.Exists(fullPath)) //no file - no point in trying to read
+            {
+                return new List<SearchResultsObject>();
+            }
+
+            var jsonString = File.ReadAllText(fullPath);
+            var savedSongs = JsonConvert.DeserializeObject<List<SearchResultsObject>>(jsonString);
+
+            return savedSongs ?? new List<SearchResultsObject>();
+        }
+
+        public static bool IsSongSaved(SearchResultsObject song)
+        {
+            var savedSongs = GetSavedSongs();
+
+            return savedSongs.Any(x => x.Id == song.Id);
+        }
+
+        public static void UnSaveSong(SearchResultsObject song)
+        {
+            var fullPath = BASE_DIR + SAVED_FOLDER + SAVED_SONGS;
+
+            var savedSongs = GetSavedSongs();
+            if (savedSongs.Any(x => x.Id == song.Id))  //if already saved
+            {
+                savedSongs.Remove(savedSongs.FirstOrDefault(x => x.Id == song.Id));
+            }
+
+            var serializedPlaylists = JsonConvert.SerializeObject(savedSongs);
+
+            File.WriteAllText(fullPath, serializedPlaylists);
+        }
     }
 }

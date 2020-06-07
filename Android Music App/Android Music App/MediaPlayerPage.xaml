@@ -15,35 +15,45 @@
         <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand">
 
             <StackLayout  Padding="30">
-                <Image x:Name="SongImage" Source="https://miro.medium.com/max/1600/1*e_Loq49BI4WmN7o9ItTADg.gif" 
+                <Image x:Name="SongImage" 
                    Aspect="AspectFill" 
                    HeightRequest="400" WidthRequest="400"
                    HorizontalOptions="Center" VerticalOptions="Center"/>
             </StackLayout>
 
-            <StackLayout Orientation="Vertical" Padding="30,0,30,0" HorizontalOptions="Center">
-                <Label x:Name="SongTitle" Text="Song name Placeholder" HorizontalTextAlignment="Center"
+            <StackLayout Orientation="Vertical" Padding="30,0,30,0" HorizontalOptions="CenterAndExpand">
+                <Label x:Name="SongTitle" HorizontalTextAlignment="Center"
                     VerticalOptions="CenterAndExpand" 
-                    HorizontalOptions="Center" FontSize="Title" TextColor="White" />
-                <Label x:Name="Artist" Text="Artist" IsVisible="False"
+                    HorizontalOptions="CenterAndExpand" FontSize="Title" TextColor="White" />
+                <Label x:Name="Artist" IsVisible="False"
                     VerticalOptions="CenterAndExpand" 
-                    HorizontalOptions="Center" FontSize="Subtitle" TextColor="LightGray" />
+                    HorizontalOptions="CenterAndExpand" FontSize="Subtitle" TextColor="LightGray" />
             </StackLayout>
 
             <StackLayout Padding="30,0,30,0">
-                <ProgressBar x:Name="TimeProgressBar" ProgressColor="#ffffff" />
+                <ProgressBar x:Name="TimeProgressBar" ProgressColor="White" />
                 <StackLayout Orientation="Horizontal">
-                    <Label x:Name="CurrentTime" Text="" HorizontalOptions="Start" TextColor="#ffffff"/>
-                    <Label x:Name="SongDuration" Text="" HorizontalOptions="EndAndExpand" TextColor="#ffffff"/>
+                    <Label x:Name="CurrentTime" Text="" HorizontalOptions="Start" TextColor="White"/>
+                    <Label x:Name="SongDuration" Text="" HorizontalOptions="EndAndExpand" TextColor="White"/>
                 </StackLayout>
             </StackLayout>
 
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                <Button Style="{StaticResource MaterialIcons}" Text="&#x000f04ae;" FontSize="40"/>
-                <Button x:Name="PlayOrPauseButton" Style="{StaticResource MaterialIcons}" Text="&#x000f040c;" FontSize="80" Clicked="PlayPausedClicked"/>
-                <Button Style="{StaticResource MaterialIcons}" Text="&#x000f04ad;" FontSize="40" Clicked="NextClicked"/>
-            </StackLayout>
-            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="45" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="45" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="1" Style="{StaticResource MaterialIcons}" Text="&#x000f04ae;" FontSize="40" Padding="0" Clicked="RestartClicked" HorizontalOptions="End"/>
+                <Button Grid.Column="2" x:Name="PlayOrPauseButton" Style="{StaticResource MaterialIcons}" Text="&#x000f040c;" FontSize="70" Clicked="PlayPausedClicked" Padding="0" HorizontalOptions="Center"/>
+                <Button Grid.Column="3" Style="{StaticResource MaterialIcons}" Text="&#x000f04ad;" FontSize="40" Clicked="NextClicked" HorizontalOptions="Start"/>
+                <Button Grid.Column="4" x:Name="HeartSong" Style="{StaticResource MaterialIcons}" Text="&#x000f02d5;" FontSize="30" Clicked="SaveSongClicked" HorizontalOptions="End"/>
+            </Grid>
+
         </StackLayout>
+            <!--<ActivityIndicator x:Name="LoadingIndicator" IsRunning="true" Color="White"/>-->
+
     </ContentPage.Content>
 </ContentPage>

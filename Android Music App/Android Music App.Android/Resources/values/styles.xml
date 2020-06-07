@@ -17,6 +17,15 @@
     <!-- colorAccent is used as the default value for colorControlActivated
          which is used to tint widgets -->
     <item name="colorAccent">#ffffff</item>
+
+	  <!--Make the status bar Translucent t oshow color of background through it-->
+	<item name="android:windowTranslucentStatus">true</item>
+
+	  <item name="android:colorPressedHighlight">#e6e6e6</item>
+	  <item name="android:colorLongPressedHighlight">#e6e6e6</item>
+	  <item name="android:colorFocusedHighlight">#e6e6e6</item>
+	  <item name="android:colorActivatedHighlight">#e6e6e6</item>
+	  
     <!-- You can also set colorControlNormal, colorControlActivated
          colorControlHighlight and colorSwitchThumbNormal. -->
     <item name="windowActionModeOverlay">true</item>

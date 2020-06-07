@@ -8,8 +8,8 @@
              NavigationPage.HasNavigationBar="False"
              x:Class="Android_Music_App.MainPage">
     <!--<ScrollView HeightRequest="3000">-->
-    <StackLayout Padding="10">
-        <SearchBar x:Name="MusicSearchBar" TextColor="#ffffff" PlaceholderColor="#ffffff" CancelButtonColor="#ffffff" 
+    <StackLayout Padding="10, 40, 10, 10">
+        <SearchBar x:Name="MusicSearchBar" TextColor="#ffffff" PlaceholderColor="#ffffff" CancelButtonColor="#ffffff"
             SearchButtonPressed="SearchButtonPressed_Handler"
             TextChanged="SearchBarOnTextChanged"
             Placeholder="Search music" />
@@ -34,66 +34,101 @@
         </ListView>
 
         <StackLayout x:Name="MusicDiscovery" Orientation="Vertical" IsVisible="True">
-        <!--Recently Played-->
-        <Label FontFamily="{StaticResource app-font}" Text="Recently Played" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
-        <CollectionView x:Name="RecentlyPlayedPlaylistsUIObj" ItemsSource="{Binding RecentlyPlayedPlaylists}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="SongPickedFromList">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="10" Margin="12" WidthRequest="120">
-                        <Image Source="{Binding ImageSource}"
+
+            <!--Made for you-->
+            <Label FontFamily="{StaticResource app-font}" Text="Made For You" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
+            <StackLayout Orientation="Horizontal">
+                <StackLayout Orientation="Vertical" WidthRequest="120">
+                    <Button Style="{StaticResource MaterialIcons}" Text="&#x000f02d2;" HorizontalOptions="Start" FontSize="110" TextColor="White" Clicked="SavedSongsPlayListClicked"/>
+                    <Label  VerticalOptions="Center"
+                        FontFamily="{StaticResource app-font}"
+                        TextColor="White"
+                        Text="Your favorite songs playlist"
+                        FontSize="Small" />
+
+                    <Label x:Name="SavedSongsPlaylistCount"
+                        TextColor="LightGray"
+                        FontFamily="{StaticResource app-font}"
+                        VerticalOptions="Start" FontSize="Micro" />
+                </StackLayout>
+
+                <StackLayout Orientation="Vertical" WidthRequest="120">
+                    <Button Style="{StaticResource MaterialIcons}" Text="&#x000f0411;" HorizontalOptions="Start" FontSize="110" TextColor="White" Clicked="RecentlyPlayedPlayListClicked"/>
+                    <Label  VerticalOptions="Center"
+                        FontFamily="{StaticResource app-font}"
+                        TextColor="White"
+                        Text="Todays mix"
+                        FontSize="Small" />
+
+                    <Label x:Name="RecentPlaylistsSongCount"
+                        Text="x songs"
+                        TextColor="LightGray"
+                        FontFamily="{StaticResource app-font}"
+                        VerticalOptions="Start" FontSize="Micro" />
+                </StackLayout>
+            </StackLayout>
+
+            <!--Recently Played-->
+            <Label FontFamily="{StaticResource app-font}" Text="Recently Played" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
+            <CollectionView x:Name="RecentlyPlayedPlaylistsUIObj" ItemsSource="{Binding RecentlyPlayedPlaylists}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="SongPickedFromList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10" Margin="10" WidthRequest="120">
+                            <Image Source="{Binding ImageSource}"
                                Grid.Row="0"
                                Aspect="AspectFill"/>
 
-                        <StackLayout Grid.Row="1">
-                            <Label Grid.Column="1"
+                            <StackLayout Grid.Row="1">
+                                <Label Grid.Column="0"
                                    VerticalOptions="Center"
                                    FontFamily="{StaticResource app-font}"
                                    TextColor="White"
                                    Text="{Binding Title}"
                                    FontSize="Small" />
 
-                            <Label Text="{Binding VideoCount}"
+                                <Label Text="{Binding VideoCount}"
                                    Grid.Row="1"
-                                   Grid.Column="1"
+                                   Grid.Column="0"
                                    TextColor="LightGray"
                                    FontFamily="{StaticResource app-font}"
                                    VerticalOptions="Start" FontSize="Micro" />
-                        </StackLayout>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
-        <!--Popular-->
-        <Label Text="Popular Playlists" FontFamily="{StaticResource app-font}" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
-        <CollectionView x:Name="PopularPlaylists" ItemsSource="{Binding PopularPlaylistResults}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="SongPickedFromList">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="10" Margin="12" WidthRequest="120">
-                        <Image Source="{Binding ImageSource}"
+            <!--Popular-->
+            <Label Text="Popular Playlists" FontFamily="{StaticResource app-font}" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
+            <CollectionView x:Name="PopularPlaylists" ItemsSource="{Binding PopularPlaylistResults}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="SongPickedFromList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10" Margin="10" WidthRequest="120" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <Image Source="{Binding ImageSource}" 
                                Grid.Row="0"
-                               Aspect="AspectFill"/>
+                               HeightRequest="110"
+                               Aspect="AspectFill" BackgroundColor="#12121212"/>
 
-                        <StackLayout Grid.Row="1">
-                            <Label Grid.Column="1"
+                            <StackLayout Grid.Row="1">
+                                <Label Grid.Column="1"
                                    VerticalOptions="Center"
                                    FontFamily="{StaticResource app-font}"
                                    TextColor="White"                                   
                                    Text="{Binding Title}"
                                    FontSize="Small"/>
 
-                            <Label Text="{Binding VideoCount}"
+                                <Label Text="{Binding VideoCount}"
                                    Grid.Row="1"
                                    Grid.Column="1"
                                    FontFamily="{StaticResource app-font}"
                                    TextColor="LightGray"   
                                    VerticalOptions="Start"
                                    FontSize="Micro" />
-                        </StackLayout>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </StackLayout>
 
     </StackLayout>
