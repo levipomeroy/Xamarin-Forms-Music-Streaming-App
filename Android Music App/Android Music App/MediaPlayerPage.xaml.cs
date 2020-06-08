@@ -1,8 +1,8 @@
 ﻿using Android.Media;
-using Android.Opengl;
 using Android_Music_App.Models;
 using Android_Music_App.Services;
 using AngleSharp.Common;
+using Java.Net;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +12,7 @@ using System.Timers;
 using System.Web;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using XFGloss;
 using YouTubeSearch;
 
 namespace Android_Music_App
@@ -220,6 +221,24 @@ namespace Android_Music_App
         {
             try
             {
+                //var color = await CrossColorThief.Current.GetPalette(ImageSource.FromUri(new Uri(_selectedItem.ImageSource)));
+
+                // Manually construct a multi-color gradient at an angle of our choosing
+                //var bkgrndGradient = new Gradient()
+                //{
+                //    Rotation = 180,
+                //    Steps = new GradientStepCollection()
+                //{
+                //    new GradientStep(Color.FromHex(color.FirstOrDefault().Color.ToHexString()), 0),
+                //    new GradientStep(Color.FromHex("#262626"), .5),
+                //    new GradientStep(Color.FromHex("#121212"), 1)
+                //}
+                //};
+
+                //ContentPageGloss.SetBackgroundGradient(this, bkgrndGradient);
+
+
+
                 _playedCount++;
                 //set up media player for song
                 if (_mediaPlayer.IsPlaying)

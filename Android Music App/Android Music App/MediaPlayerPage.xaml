@@ -4,11 +4,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:xfg="clr-namespace:XFGloss;assembly=XFGloss"
              mc:Ignorable="d"
              BackgroundColor="#121212"
              NavigationPage.HasNavigationBar="False"
              x:Class="Android_Music_App.MediaPlayerPage">
 
+    <xfg:ContentPageGloss.BackgroundGradient>
+        <xfg:Gradient Rotation="180">
+            <xfg:GradientStep StepColor="#404040" StepPercentage="0" />
+            <xfg:GradientStep StepColor="#262626" StepPercentage=".4" />
+            <xfg:GradientStep StepColor="#121212" StepPercentage=".7" />
+        </xfg:Gradient>
+    </xfg:ContentPageGloss.BackgroundGradient>
 
     <ContentPage.Content>
 
