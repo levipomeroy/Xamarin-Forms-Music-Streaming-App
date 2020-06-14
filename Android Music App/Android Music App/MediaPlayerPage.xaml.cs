@@ -20,7 +20,7 @@ namespace Android_Music_App
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MediaPlayerPage : ContentPage
     {
-        PlaylistObject _selectedPlayList;
+        //PlaylistObject _selectedPlayList;
         SearchResultsObject _selectedItem;
         Stack<SearchResultsObject> _songsInPlayList;
         MediaPlayer _mediaPlayer;
@@ -30,11 +30,11 @@ namespace Android_Music_App
         int _playedCount;
         private const string FILE_DIR = "/storage/emulated/0/MusicApp/Queue/";
 
-        public MediaPlayerPage(PlaylistObject selectedItem, Stack<SearchResultsObject> knownPlaylist = null)
+        public MediaPlayerPage(/*PlaylistObject selectedItem, */Stack<SearchResultsObject> knownPlaylist)
         {
             try
             {
-                _selectedPlayList = selectedItem;
+                //_selectedPlayList = selectedItem;
                 _mediaPlayer = _mediaPlayer ?? new MediaPlayer();
                 _songsInPlayList = new Stack<SearchResultsObject>();
 
@@ -46,15 +46,15 @@ namespace Android_Music_App
                 _mediaPlayer.Looping = false;
                 _mediaPlayer.Completion += OnCompleteHandler;
 
-                InitializeComponent();
-                if (knownPlaylist == null)
-                {
-                    InitPlaylist();
-                }
-                else
-                {
+                //if (knownPlaylist == null)
+                //{
+                //    InitPlaylist();
+                //}
+                //else
+                //{
                     StartKnownPlaylist(knownPlaylist);
-                }
+                //}  
+                InitializeComponent();
             }
             catch (Exception ex)
             {
@@ -63,48 +63,55 @@ namespace Android_Music_App
         }
 
         //Set up
-        public async void InitPlaylist()
-        {
-            try
-            {
-                await GetSongsInPlaylist(_selectedPlayList.Url);
-                await GetFirstSong();
-                await GetNextSectionOfSongsInPlaylist();
-            }
-            catch (Exception ex)
-            {
-                FileManager.LogError("Error setting up media player page", ex);
-            }
-        }
+        //public async void InitPlaylist()
+        //{
+        //    try
+        //    {
+        //        await GetSongsInPlaylist(_selectedPlayList.Url);
+        //        await GetFirstSong();
+        //        await GetNextSectionOfSongsInPlaylist();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        FileManager.LogError("Error setting up media player page", ex);
+        //    }
+        //}
 
         public async void StartKnownPlaylist(Stack<SearchResultsObject> knownPlaylist)
         {
             _songsInPlayList = knownPlaylist;
             _selectedItem = _songsInPlayList.FirstOrDefault();
-            await FileManager.DownloadSingleSong(_selectedItem);
+            if(_selectedItem == null)
+            {
+                FileManager.LogInfo("No songs in selected playlist at point of 'StartKnownPlaylist'");
+            }
+
+            //await FileManager.DownloadSingleSong(_selectedItem);
             _downloadedCount++;
             await PlaySelectedSong();
 
             _songsInPlayList.Pop(); //already set to play
+
+            await GetNextSectionOfSongsInPlaylist();
         }
 
-        private async Task GetSongsInPlaylist(string playListUrl)
-        {
-            var songsInPlayListClient = new PlaylistItemsSearch();
-            var songs = await songsInPlayListClient.GetPlaylistItems(playListUrl);
-            songs.Shuffle();
-            _songsInPlayList = new Stack<SearchResultsObject>(songs.Select(x => new SearchResultsObject(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
-        }
+        //private async Task GetSongsInPlaylist(string playListUrl)
+        //{
+        //    var songsInPlayListClient = new PlaylistItemsSearch();
+        //    var songs = await songsInPlayListClient.GetPlaylistItems(playListUrl);
+        //    songs.Shuffle();
+        //    _songsInPlayList = new Stack<SearchResultsObject>(songs.Select(x => new SearchResultsObject(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
+        //}
 
-        private async Task GetFirstSong()
-        {
-            _selectedItem = _songsInPlayList.FirstOrDefault();
-            await FileManager.DownloadSingleSong(_selectedItem);
-            _downloadedCount++;
-            await PlaySelectedSong();
+        //private async Task GetFirstSong()
+        //{
+        //    _selectedItem = _songsInPlayList.FirstOrDefault();
+        //    await FileManager.DownloadSingleSong(_selectedItem);
+        //    _downloadedCount++;
+        //    await PlaySelectedSong();
 
-            _songsInPlayList.Pop(); //already set to play
-        }
+        //    _songsInPlayList.Pop(); //already set to play
+        //}
 
 
 
@@ -205,8 +212,13 @@ namespace Android_Music_App
             {
                 _selectedItem = _songsInPlayList.Pop(); //get next song
 
+                //var trackInfo = Itunes.GetDataFromItunes(_selectedItem.Title.CleanTitle(), 1);
+                //_selectedItem.Title = trackInfo.TrackName ?? _selectedItem.Title;
+                //_selectedItem.ImageSource = trackInfo.ArtworkUrl100 ?? _selectedItem.ImageSource;
+                //_selectedItem.Artist = trackInfo.ArtistName ?? _selectedItem.Title.GetArtistName();
+
                 await PlaySelectedSong();
-                if (_downloadedCount - _playedCount <= 2) //only 2 or less left on ready stack
+                if (_downloadedCount - _playedCount <= 3) //only 3 or less left on ready stack
                 {
                     await GetNextSectionOfSongsInPlaylist(); //get more songs 
                 }
@@ -221,25 +233,6 @@ namespace Android_Music_App
         {
             try
             {
-                //var color = await CrossColorThief.Current.GetPalette(ImageSource.FromUri(new Uri(_selectedItem.ImageSource)));
-
-                // Manually construct a multi-color gradient at an angle of our choosing
-                //var bkgrndGradient = new Gradient()
-                //{
-                //    Rotation = 180,
-                //    Steps = new GradientStepCollection()
-                //{
-                //    new GradientStep(Color.FromHex(color.FirstOrDefault().Color.ToHexString()), 0),
-                //    new GradientStep(Color.FromHex("#262626"), .5),
-                //    new GradientStep(Color.FromHex("#121212"), 1)
-                //}
-                //};
-
-                //ContentPageGloss.SetBackgroundGradient(this, bkgrndGradient);
-
-
-
-                _playedCount++;
                 //set up media player for song
                 if (_mediaPlayer.IsPlaying)
                 {
@@ -249,9 +242,11 @@ namespace Android_Music_App
 
                 var fileName = Directory.GetFiles(FILE_DIR).FirstOrDefault(x => Path.GetFileName(x).Contains(_selectedItem.Id));
                 var filePath = Path.Combine(FILE_DIR, fileName);
+
                 await _mediaPlayer.SetDataSourceAsync(filePath);
                 _mediaPlayer.Prepare();
                 _mediaPlayer.Start();
+                _playedCount++;
                 _timer.Start();
 
                 //update song info
@@ -260,7 +255,16 @@ namespace Android_Music_App
                 {
                     CurrentTime.Text = SongTimeFormat(_tickCount);
                     TimeProgressBar.Progress = 0;
-                    var artist = _selectedItem.Title.GetArtistName();
+
+                    var artist = string.Empty;                                            //////////// <------------ artist stuff should be pulled out into func
+                    if(string.IsNullOrEmpty(_selectedItem.Artist))
+                    {
+                        artist = _selectedItem.Title.GetArtistName();
+                    }
+                    else
+                    {
+                        artist = _selectedItem.Artist;
+                    }
                     if (!string.IsNullOrWhiteSpace(artist))
                     {
                         Artist.Text = artist;
@@ -270,14 +274,13 @@ namespace Android_Music_App
                     SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
                     SongImage.Source = _selectedItem.ImageSource;
                     PlayOrPauseButton.Text = "\U000f03e5"; //pause button
-                    if (FileManager.IsSongSaved(_selectedItem))
+                    if (FileManager.IsSongSaved(_selectedItem))                 ///////////////// <-------------- This list should really be in memory and avoid this IO for every song
                     {
                         HeartSong.Text = "\U000f02d1"; //filled in heart
                     }
                     else
                     {
                         HeartSong.Text = "\U000f02d5"; //heart outline
-
                     }
                 });
             }
@@ -291,7 +294,14 @@ namespace Android_Music_App
         {
             for (int i = 0; i < 10 && i < _songsInPlayList.Count(); i++)
             {
-                await FileManager.DownloadSingleSong(_songsInPlayList.GetItemByIndex(i));
+                var song = _songsInPlayList.GetItemByIndex(i);
+                await FileManager.DownloadSingleSong(song);
+
+                //var trackInfo = Itunes.GetDataFromItunes(song.Title.CleanTitle(), 1);
+                //_songsInPlayList.GetItemByIndex(i).Title = trackInfo.TrackName ?? song.Title;
+                //_songsInPlayList.GetItemByIndex(i).ImageSource = trackInfo.ArtworkUrl100 ?? song.ImageSource;
+                //_songsInPlayList.GetItemByIndex(i).Artist = trackInfo.ArtistName ?? song.Title.GetArtistName();
+
                 _downloadedCount++;
             }
         }

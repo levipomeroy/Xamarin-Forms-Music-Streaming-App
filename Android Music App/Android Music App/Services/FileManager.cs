@@ -24,6 +24,7 @@ namespace Android_Music_App.Services
 
         public static void InitFolders()
         {
+            Directory.CreateDirectory(BASE_DIR); //Create app folder
             Directory.CreateDirectory(BASE_DIR + QUEUE_FOLDER); // Create music queue folder
             Directory.CreateDirectory(BASE_DIR + LOG_FOLDER); // Create log folder
             Directory.CreateDirectory(BASE_DIR + SAVED_FOLDER); //Create saved folder for playlists and songs
@@ -33,22 +34,29 @@ namespace Android_Music_App.Services
         //Music management methods
         public static async Task DownloadSingleSong(SearchResultsObject song)
         {
-            if (!Directory.GetFiles(BASE_DIR + QUEUE_FOLDER).Any(x => Path.GetFileName(x).Contains(song.Id.ToString()))) //if not already downloaded
+            try
             {
-                var youtube = new YoutubeClient();
-
-                var streamManifest = await youtube.Videos.Streams.GetManifestAsync(song.Id);
-
-                // get highest bitrate audio-only stream
-                var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
-                //var streamInfo = streamManifest.GetAudioOnly().OrderBy(x => x.Size).FirstOrDefault(); // get smallest audio file
-
-                if (streamInfo != null)
+                if (!Directory.GetFiles(BASE_DIR + QUEUE_FOLDER).Any(x => Path.GetFileName(x).Contains(song.Id.ToString()))) //if not already downloaded
                 {
-                    //var stream = await youtube.Videos.Streams.GetAsync(streamInfo); // Get the actual stream
-                    // Download the stream to file
-                    await youtube.Videos.Streams.DownloadAsync(streamInfo, Path.Combine(BASE_DIR + QUEUE_FOLDER, $"{song.Id}.{streamInfo.Container}"));
+                    var youtube = new YoutubeClient();
+
+                    var streamManifest = await youtube.Videos.Streams.GetManifestAsync(song.Id);
+
+                    // get highest bitrate audio-only stream
+                    var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
+                    //var streamInfo = streamManifest.GetAudioOnly().OrderBy(x => x.Size).FirstOrDefault(); // get smallest audio file
+
+                    if (streamInfo != null)
+                    {
+                        //var stream = await youtube.Videos.Streams.GetAsync(streamInfo); // Get the actual stream
+                        // Download the stream to file
+                        await youtube.Videos.Streams.DownloadAsync(streamInfo, Path.Combine(BASE_DIR + QUEUE_FOLDER, $"{song.Id}.{streamInfo.Container}"));
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                LogError($"Error downloading song: {song.Id}", ex);
             }
         }
 

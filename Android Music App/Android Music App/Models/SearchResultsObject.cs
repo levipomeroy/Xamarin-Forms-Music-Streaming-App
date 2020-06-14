@@ -9,12 +9,14 @@ namespace Android_Music_App.Models
         public string ImageSource { get; set; }
 
         public string Id { get; set; }
+        public string Artist { get; set; }
 
-        public SearchResultsObject(string title, string imageUrl, string id)
+        public SearchResultsObject(string title, string imageUrl, string id, string artist = null)
         {
             Title = title;
             ImageSource = imageUrl;
             Id = id;
+            Artist = artist;
         }
         public SearchResultsObject() { }
     }

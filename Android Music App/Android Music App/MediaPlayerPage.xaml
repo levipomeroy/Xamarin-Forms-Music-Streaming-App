@@ -20,13 +20,14 @@
 
     <ContentPage.Content>
 
-        <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand">
+        <StackLayout Orientation="Vertical" VerticalOptions="StartAndExpand">
 
-            <StackLayout  Padding="30">
+            <StackLayout WidthRequest="380" HeightRequest="380" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="StartAndExpand" Padding="0, 120, 0, 80">
                 <Image x:Name="SongImage" 
-                   Aspect="AspectFill" 
-                   HeightRequest="400" WidthRequest="400"
-                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                   WidthRequest="380" HeightRequest="380"
+                   Aspect="AspectFit" 
+                   HorizontalOptions="CenterAndExpand" 
+                   VerticalOptions="CenterAndExpand"/>
             </StackLayout>
 
             <StackLayout Orientation="Vertical" Padding="30,0,30,0" HorizontalOptions="CenterAndExpand">

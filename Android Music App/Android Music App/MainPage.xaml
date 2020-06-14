@@ -8,146 +8,151 @@
              BackgroundColor="#121212"
              NavigationPage.HasNavigationBar="False"
              x:Class="Android_Music_App.MainPage">
-    
-    <xfg:ContentPageGloss.BackgroundGradient>
+
+    <!--<xfg:ContentPageGloss.BackgroundGradient>
         <xfg:Gradient Rotation="190">
-            <!--<xfg:GradientStep StepColor="#2e4252" StepPercentage="0" />
+            --><!--<xfg:GradientStep StepColor="#2e4252" StepPercentage="0" />
             <xfg:GradientStep StepColor="#253541" StepPercentage=".2" />
             <xfg:GradientStep StepColor="#121a21" StepPercentage=".6" />
-            <xfg:GradientStep StepColor="#121212" StepPercentage=".8" />-->
+            <xfg:GradientStep StepColor="#121212" StepPercentage=".8" />--><!--
 
             <xfg:GradientStep StepColor="#253541" StepPercentage="0" />
             <xfg:GradientStep StepColor="#1c2831" StepPercentage=".2" />
             <xfg:GradientStep StepColor="#121a21" StepPercentage=".5" />
             <xfg:GradientStep StepColor="#090d10" StepPercentage=".7" />
         </xfg:Gradient>
-    </xfg:ContentPageGloss.BackgroundGradient>
-    
-    <!--<ScrollView HeightRequest="3000">-->
+    </xfg:ContentPageGloss.BackgroundGradient>-->
 
-    <StackLayout Padding="10, 40, 10, 10">
-        <SearchBar x:Name="MusicSearchBar" TextColor="White" PlaceholderColor="White" CancelButtonColor="White"
+    <xfg:ContentPageGloss.BackgroundGradient>
+        <xfg:Gradient Rotation="180">
+            <xfg:GradientStep StepColor="#404040" StepPercentage="0" />
+            <xfg:GradientStep StepColor="#262626" StepPercentage=".4" />
+            <xfg:GradientStep StepColor="#121212" StepPercentage=".7" />
+        </xfg:Gradient>
+    </xfg:ContentPageGloss.BackgroundGradient>
+
+    <ScrollView HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand">
+
+        <StackLayout Padding="10, 40, 10, 10">
+            <SearchBar x:Name="MusicSearchBar" TextColor="White" PlaceholderColor="White" CancelButtonColor="White"
             SearchButtonPressed="SearchButtonPressed_Handler"
             TextChanged="SearchBarOnTextChanged"
             Placeholder="Search music" />
 
-        <!--Search results-->
-        <ListView x:Name="MusicResults" ItemsSource="{Binding YoutubeSearchResults}" RowHeight="100" ItemSelected="SongPickedByUser" IsVisible="False">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Vertical" Padding="5">
-                            <StackLayout Orientation="Horizontal">
-                                <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100"/>
-                                <StackLayout Orientation="Vertical">
-                                    <Label Text="{Binding Title}" TextColor="White"/>
-                                    <Label Text="{Binding VideoCount}" TextColor="White"/>
+            <!--Search results-->
+            <ListView x:Name="MusicResults" ItemsSource="{Binding YoutubeSearchResults}" RowHeight="100" ItemSelected="PlaylistPickedFromSearchResults" IsVisible="False">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Vertical" Padding="5">
+                                <StackLayout Orientation="Horizontal">
+                                    <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100"/>
+                                    <StackLayout Orientation="Vertical">
+                                        <Label Text="{Binding Title}" TextColor="White"/>
+                                        <Label Text="{Binding VideoCount}" TextColor="White"/>
+                                    </StackLayout>
                                 </StackLayout>
                             </StackLayout>
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-        <StackLayout x:Name="MusicDiscovery" Orientation="Vertical" IsVisible="True">
+            <StackLayout x:Name="MusicDiscovery" Orientation="Vertical" IsVisible="True">
 
-            <!--Made for you-->
-            <Label FontFamily="{StaticResource app-font}" Text="Made For You" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
-            <StackLayout Orientation="Horizontal">
-                <StackLayout Orientation="Vertical" WidthRequest="120">
-                    <Button Style="{StaticResource MaterialIcons}" Text="&#x000f02d2;" HorizontalOptions="Start" FontSize="110" TextColor="White" Clicked="SavedSongsPlayListClicked"/>
-                    <Label  VerticalOptions="Center"
+                <!--Made for you-->
+                <Label FontFamily="{StaticResource app-font}" Text="Made For You" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
+                <StackLayout Orientation="Horizontal">
+                    <StackLayout Orientation="Vertical" WidthRequest="120">
+                        <Button Style="{StaticResource MaterialIcons}" Text="&#x000f02d2;" HorizontalOptions="Start" FontSize="110" TextColor="White" Clicked="SavedSongsPlayListClicked"/>
+                        <Label  VerticalOptions="Center"
                         FontFamily="{StaticResource app-font}"
                         TextColor="White"
                         Text="Your favorite songs playlist"
                         FontSize="Small" />
 
-                    <Label x:Name="SavedSongsPlaylistCount"
+                        <Label x:Name="SavedSongsPlaylistCount"
                         TextColor="LightGray"
                         FontFamily="{StaticResource app-font}"
                         VerticalOptions="Start" FontSize="Micro" />
-                </StackLayout>
+                    </StackLayout>
 
-                <StackLayout Orientation="Vertical" WidthRequest="120">
-                    <Button Style="{StaticResource MaterialIcons}" Text="&#x000f0411;" HorizontalOptions="Start" FontSize="110" TextColor="White" Clicked="RecentlyPlayedPlayListClicked"/>
-                    <Label  VerticalOptions="Center"
+                    <StackLayout Orientation="Vertical" WidthRequest="120">
+                        <Button Style="{StaticResource MaterialIcons}" Text="&#x000f0411;" HorizontalOptions="Start" FontSize="110" TextColor="White" Clicked="RecentlyPlayedPlayListClicked"/>
+                        <Label  VerticalOptions="Center"
                         FontFamily="{StaticResource app-font}"
                         TextColor="White"
                         Text="Todays mix"
                         FontSize="Small" />
 
-                    <Label x:Name="RecentPlaylistsSongCount"
+                        <Label x:Name="RecentPlaylistsSongCount"
                         Text="x songs"
                         TextColor="LightGray"
                         FontFamily="{StaticResource app-font}"
                         VerticalOptions="Start" FontSize="Micro" />
+                    </StackLayout>
                 </StackLayout>
-            </StackLayout>
 
-            <!--Recently Played-->
-            <Label FontFamily="{StaticResource app-font}" Text="Recently Played" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
-            <CollectionView x:Name="RecentlyPlayedPlaylistsUIObj" ItemsSource="{Binding RecentlyPlayedPlaylists}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="SongPickedFromList">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Padding="10" Margin="10" WidthRequest="120">
-                            <Image Source="{Binding ImageSource}"
-                               Grid.Row="0"
-                               Aspect="AspectFill"/>
-
-                            <StackLayout Grid.Row="1">
-                                <Label Grid.Column="0"
+                <!--Recently Played-->
+                <Label FontFamily="{StaticResource app-font}" Text="Recently Played" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
+                <CollectionView x:Name="RecentlyPlayedPlaylistsUIObj" ItemsSource="{Binding RecentlyPlayedPlaylists}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="PlaylistPickedFromList" HeightRequest="200">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Padding="10" Margin="10" WidthRequest="120" Orientation="Vertical">
+                                <StackLayout Orientation="Horizontal" WidthRequest="120" HeightRequest="120">
+                                    <Image Source="{Binding ImageSource}" 
+                                           HorizontalOptions="CenterAndExpand"
+                                           Aspect="AspectFit"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Vertical">
+                                    <Label
                                    VerticalOptions="Center"
                                    FontFamily="{StaticResource app-font}"
                                    TextColor="White"
                                    Text="{Binding Title}"
                                    FontSize="Small" />
 
-                                <Label Text="{Binding VideoCount}"
-                                   Grid.Row="1"
-                                   Grid.Column="0"
+                                    <Label Text="{Binding VideoCount}"
                                    TextColor="LightGray"
                                    FontFamily="{StaticResource app-font}"
                                    VerticalOptions="Start" FontSize="Micro" />
+                                </StackLayout>
                             </StackLayout>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-            <!--Popular-->
-            <Label Text="Popular Playlists" FontFamily="{StaticResource app-font}" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
-            <CollectionView x:Name="PopularPlaylists" ItemsSource="{Binding PopularPlaylistResults}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="SongPickedFromList">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Padding="10" Margin="10" WidthRequest="120" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                            <Image Source="{Binding ImageSource}" 
-                               Grid.Row="0"
-                               HeightRequest="110"
-                               Aspect="AspectFill" BackgroundColor="#12121212"/>
-
-                            <StackLayout Grid.Row="1">
-                                <Label Grid.Column="1"
+                <!--Popular-->
+                <Label FontFamily="{StaticResource app-font}" Text="Popular Playlists" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
+                <CollectionView x:Name="PopularPlaylists" ItemsSource="{Binding PopularPlaylistResults}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="PlaylistPickedFromList" HeightRequest="200">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Padding="10" Margin="10" WidthRequest="120" Orientation="Vertical">
+                                <StackLayout Orientation="Horizontal" WidthRequest="120" HeightRequest="120">
+                                    <Image Source="{Binding ImageSource}" 
+                                           HorizontalOptions="CenterAndExpand"
+                                           Aspect="AspectFit"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Vertical">
+                                    <Label
                                    VerticalOptions="Center"
                                    FontFamily="{StaticResource app-font}"
-                                   TextColor="White"                                   
+                                   TextColor="White"
                                    Text="{Binding Title}"
-                                   FontSize="Small"/>
+                                   FontSize="Small" />
 
-                                <Label Text="{Binding VideoCount}"
-                                   Grid.Row="1"
-                                   Grid.Column="1"
+                                    <Label Text="{Binding VideoCount}"
+                                   TextColor="LightGray"
                                    FontFamily="{StaticResource app-font}"
-                                   TextColor="LightGray"   
-                                   VerticalOptions="Start"
-                                   FontSize="Micro" />
+                                   VerticalOptions="Start" FontSize="Micro" />
+                                </StackLayout>
                             </StackLayout>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-    </StackLayout>
-    <!--</ScrollView>-->
+            </StackLayout>
+
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using TagLib.Riff;
 using Xamarin.Forms;
 using YouTubeSearch;
 
@@ -21,12 +20,14 @@ namespace Android_Music_App
         private ObservableCollection<PlaylistObject> PopularPlaylistResults;
         private ObservableCollection<PlaylistObject> RecentlyPlayedPlaylists;
         private List<SearchResultsObject> _savedSongs;
-        private List<SearchResultsObject> _recentlyPlayedPlaylistSongs;
+        private PlaylistSearch _playlistSearchClient;
+        private PlaylistItemsSearch _playlistitemsClient;
 
         public MainPage()
         {
             InitializeComponent();
-            BindingContext = new PlaylistObject();
+            _playlistSearchClient = new PlaylistSearch();
+            _playlistitemsClient = new PlaylistItemsSearch();
 
             try
             {
@@ -39,6 +40,8 @@ namespace Android_Music_App
             {
                 FileManager.LogError("Error setting up home page", ex);
             }
+
+            BindingContext = new PlaylistObject();
         }
 
         public async void InitPlaylists()
@@ -57,8 +60,12 @@ namespace Android_Music_App
             _savedSongs = FileManager.GetSavedSongs();
             SavedSongsPlaylistCount.Text = $"{_savedSongs.Count} songs";
 
-            //Get song info for custom playlist based on recently played 
-            await GetSongsForRecentPlaylists(playlists);
+            //Device.BeginInvokeOnMainThread(() =>
+            //{
+            //    RecentlyPlayedPlaylistsUIObj.ItemsSource = RecentlyPlayedPlaylists;
+            //    RecentPlaylistsSongCount.Text = $"{songcount} songs";
+            //    SavedSongsPlaylistCount.Text = $"{_savedSongs.Count} songs";
+            //});
         }
 
         protected override void OnAppearing() //on page load
@@ -68,17 +75,15 @@ namespace Android_Music_App
             //Update the recently played playlists
             RecentlyPlayedPlaylists = new ObservableCollection<PlaylistObject>(FileManager.GetPlaylists());
             RecentlyPlayedPlaylistsUIObj.ItemsSource = RecentlyPlayedPlaylists;
+
+            //update saved songs 
+            _savedSongs = FileManager.GetSavedSongs();
         }
 
         public async Task GetPopularSongs()
         {
-            //var playlists = new List<PlaylistSearchComponents>();
-            //await Task.Run(async () =>
-            //{
-                var playlistClient = new PlaylistSearch();
-                var playlists = await playlistClient.GetPlaylists("top popular hits", 1);
-                playlists.Shuffle();
-            //});
+            var playlists = await _playlistSearchClient.GetPlaylists("top popular hits", 1);
+            playlists.Shuffle();
 
             PopularPlaylistResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle().CleanTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
             PopularPlaylists.ItemsSource = PopularPlaylistResults;
@@ -86,8 +91,8 @@ namespace Android_Music_App
 
         public async void SearchButtonPressed_Handler(object sender, System.EventArgs e)
         {
-            var playlistClient = new PlaylistSearch();
-            var playlists = await playlistClient.GetPlaylists(MusicSearchBar.Text, 1);
+            //var playlistClient = new PlaylistSearch();
+            var playlists = await _playlistSearchClient.GetPlaylists(MusicSearchBar.Text, 1);
             YoutubeSearchResults = new ObservableCollection<PlaylistObject>(playlists.Select(x=> new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle().CleanTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
 
             MusicResults.ItemsSource = YoutubeSearchResults;
@@ -95,21 +100,32 @@ namespace Android_Music_App
             MusicDiscovery.IsVisible = false; //hide music discovery
         }
 
-        private async void SongPickedByUser(object sender, SelectedItemChangedEventArgs e)
+        //playlist selected
+        private async void PlaylistPickedFromSearchResults(object sender, SelectedItemChangedEventArgs e)
         {
-            var selection = (PlaylistObject)e.SelectedItem;
-            FileManager.AddPlaylist(selection);
+            var selection = e.SelectedItem as PlaylistObject;
 
-            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(selection)));
+            await Navigation.PushModalAsync(new NavigationPage(new LoadingPage(selection)));
         }
 
-        private async void SongPickedFromList(object sender, SelectionChangedEventArgs e)
+        private async void PlaylistPickedFromList(object sender, SelectionChangedEventArgs e)
         {
             var selection = e.CurrentSelection.FirstOrDefault() as PlaylistObject;
-            FileManager.AddPlaylist(selection);
 
-            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(selection)));
+            await Navigation.PushModalAsync(new NavigationPage(new LoadingPage(selection)));
         }
+
+       
+        public async void SavedSongsPlayListClicked(object sender, System.EventArgs e)
+        {
+            await Navigation.PushModalAsync(new NavigationPage(new LoadingPage(savedSongs: true)));
+        }
+
+        public async void RecentlyPlayedPlayListClicked(object sender, System.EventArgs e)
+        {
+            await Navigation.PushModalAsync(new NavigationPage(new LoadingPage(recentlyPlayedPlaylist: true)));
+        }
+
 
         private void SearchBarOnTextChanged(object sender, TextChangedEventArgs textChangedEventArgs)
         {
@@ -122,41 +138,11 @@ namespace Android_Music_App
             }
         }
 
-        public async void SavedSongsPlayListClicked(object sender, System.EventArgs e)
-        {
-            _savedSongs.Shuffle();
-            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(null, new Stack<SearchResultsObject>(_savedSongs))));
-        }
-
-        public async void RecentlyPlayedPlayListClicked(object sender, System.EventArgs e)
-        {
-            _recentlyPlayedPlaylistSongs.Shuffle();
-            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(null, new Stack<SearchResultsObject>(_recentlyPlayedPlaylistSongs))));
-        }
-
-        public async Task GetSongsForRecentPlaylists(List<PlaylistObject> playlists)
-        {
-            _recentlyPlayedPlaylistSongs = new List<SearchResultsObject>();
-
-            foreach (var playlist in playlists.Take(4))
-            {
-                //await Task.Run(async () =>
-                //{
-                var songsInPlayListClient = new PlaylistItemsSearch();
-                var songs = await songsInPlayListClient.GetPlaylistItems(playlist.Url);
-                _recentlyPlayedPlaylistSongs.AddRange(songs.Select(x => new SearchResultsObject(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
-                //});
-            }
-
-            //RecentPlaylistsSongCount.Text = $"{_recentlyPlayedPlaylistSongs.Count} songs";
-        }
-
         //helper method
         public string GetSongIdFromUrl(string url)
         {
             var query = HttpUtility.ParseQueryString(new Uri(url).Query);
             return query["v"];
         }
-
     }
 }
