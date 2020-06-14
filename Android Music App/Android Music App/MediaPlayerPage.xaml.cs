@@ -34,6 +34,7 @@ namespace Android_Music_App
         {
             try
             {
+                InitializeComponent();
                 //_selectedPlayList = selectedItem;
                 _mediaPlayer = _mediaPlayer ?? new MediaPlayer();
                 _songsInPlayList = new Stack<SearchResultsObject>();
@@ -54,7 +55,6 @@ namespace Android_Music_App
                 //{
                     StartKnownPlaylist(knownPlaylist);
                 //}  
-                InitializeComponent();
             }
             catch (Exception ex)
             {
@@ -210,12 +210,8 @@ namespace Android_Music_App
         {
             try
             {
+                _timer.Stop();
                 _selectedItem = _songsInPlayList.Pop(); //get next song
-
-                //var trackInfo = Itunes.GetDataFromItunes(_selectedItem.Title.CleanTitle(), 1);
-                //_selectedItem.Title = trackInfo.TrackName ?? _selectedItem.Title;
-                //_selectedItem.ImageSource = trackInfo.ArtworkUrl100 ?? _selectedItem.ImageSource;
-                //_selectedItem.Artist = trackInfo.ArtistName ?? _selectedItem.Title.GetArtistName();
 
                 await PlaySelectedSong();
                 if (_downloadedCount - _playedCount <= 3) //only 3 or less left on ready stack
@@ -256,21 +252,12 @@ namespace Android_Music_App
                     CurrentTime.Text = SongTimeFormat(_tickCount);
                     TimeProgressBar.Progress = 0;
 
-                    var artist = string.Empty;                                            //////////// <------------ artist stuff should be pulled out into func
-                    if(string.IsNullOrEmpty(_selectedItem.Artist))
+                    if (!string.IsNullOrWhiteSpace(_selectedItem.Artist))
                     {
-                        artist = _selectedItem.Title.GetArtistName();
-                    }
-                    else
-                    {
-                        artist = _selectedItem.Artist;
-                    }
-                    if (!string.IsNullOrWhiteSpace(artist))
-                    {
-                        Artist.Text = artist;
+                        Artist.Text = _selectedItem.Artist;
                         Artist.IsVisible = true;
                     }
-                    SongTitle.Text = _selectedItem.Title.Replace($"{artist}-", string.Empty).CleanTitle();
+                    SongTitle.Text = _selectedItem.Title.Replace($"{_selectedItem.Artist}-", string.Empty).CleanTitle();
                     SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
                     SongImage.Source = _selectedItem.ImageSource;
                     PlayOrPauseButton.Text = "\U000f03e5"; //pause button
@@ -297,10 +284,10 @@ namespace Android_Music_App
                 var song = _songsInPlayList.GetItemByIndex(i);
                 await FileManager.DownloadSingleSong(song);
 
-                //var trackInfo = Itunes.GetDataFromItunes(song.Title.CleanTitle(), 1);
-                //_songsInPlayList.GetItemByIndex(i).Title = trackInfo.TrackName ?? song.Title;
-                //_songsInPlayList.GetItemByIndex(i).ImageSource = trackInfo.ArtworkUrl100 ?? song.ImageSource;
-                //_songsInPlayList.GetItemByIndex(i).Artist = trackInfo.ArtistName ?? song.Title.GetArtistName();
+                var trackInfo = Itunes.GetDataFromItunes(song, 1);
+                _songsInPlayList.GetItemByIndex(i).Title = trackInfo.Title;
+                _songsInPlayList.GetItemByIndex(i).ImageSource = trackInfo.ImageSource;
+                _songsInPlayList.GetItemByIndex(i).Artist = trackInfo.Artist;
 
                 _downloadedCount++;
             }

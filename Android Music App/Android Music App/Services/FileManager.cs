@@ -96,6 +96,7 @@ namespace Android_Music_App.Services
                 using (var tw = new StreamWriter(fullPath, true))
                 {
                     tw.WriteLine($"\n{DateTime.Now}\t {message}");
+                    tw.Close();
                 }
             }
         }
@@ -119,6 +120,7 @@ namespace Android_Music_App.Services
                     tw.WriteLine($"\n{DateTime.Now}\t {message}");
                     tw.WriteLine($"Exception message: {ex.Message}");
                     tw.WriteLine($"Exception stack trace: {ex.StackTrace}");
+                    tw.Close();
                 }
             }
         }

@@ -22,9 +22,9 @@
 
         <StackLayout Orientation="Vertical" VerticalOptions="StartAndExpand">
 
-            <StackLayout WidthRequest="380" HeightRequest="380" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="StartAndExpand" Padding="0, 120, 0, 80">
+            <StackLayout WidthRequest="360" HeightRequest="360" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="StartAndExpand" Padding="0, 120, 0, 80">
                 <Image x:Name="SongImage" 
-                   WidthRequest="380" HeightRequest="380"
+                   WidthRequest="360" HeightRequest="360"
                    Aspect="AspectFit" 
                    HorizontalOptions="CenterAndExpand" 
                    VerticalOptions="CenterAndExpand"/>

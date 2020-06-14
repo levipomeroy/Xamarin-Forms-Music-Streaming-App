@@ -48,10 +48,10 @@ namespace Android_Music_App
             var firstSong = chosenPlaylist.FirstOrDefault();
             await FileManager.DownloadSingleSong(firstSong);
 
-            var trackInfo = Itunes.GetDataFromItunes(firstSong.Title.CleanTitle(), 1);
-            chosenPlaylist.FirstOrDefault().Title = trackInfo.TrackName ?? firstSong.Title;
-            chosenPlaylist.FirstOrDefault().ImageSource = trackInfo.ArtworkUrl100 ?? firstSong.ImageSource;
-            chosenPlaylist.FirstOrDefault().Artist = trackInfo.ArtistName ?? firstSong.Title.GetArtistName();
+            var trackInfo = Itunes.GetDataFromItunes(firstSong, 1);
+            chosenPlaylist.FirstOrDefault().Title = trackInfo.Title;
+            chosenPlaylist.FirstOrDefault().ImageSource = trackInfo.ImageSource;
+            chosenPlaylist.FirstOrDefault().Artist = trackInfo.Artist;
 
             //load media player page 
             await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(chosenPlaylist)));
@@ -74,10 +74,10 @@ namespace Android_Music_App
             var firstSong = recentlyPlayedPlaylistSongs.FirstOrDefault();
             await FileManager.DownloadSingleSong(firstSong);
 
-            var trackInfo = Itunes.GetDataFromItunes(firstSong.Title.CleanTitle(), 1);
-            recentlyPlayedPlaylistSongs.FirstOrDefault().Title = trackInfo.TrackName ?? firstSong.Title;
-            recentlyPlayedPlaylistSongs.FirstOrDefault().ImageSource = trackInfo.ArtworkUrl100 ?? firstSong.ImageSource;
-            recentlyPlayedPlaylistSongs.FirstOrDefault().Artist = trackInfo.ArtistName ?? firstSong.Title.GetArtistName();
+            var trackInfo = Itunes.GetDataFromItunes(firstSong, 1);
+            recentlyPlayedPlaylistSongs.FirstOrDefault().Title = trackInfo.Title;
+            recentlyPlayedPlaylistSongs.FirstOrDefault().ImageSource = trackInfo.ImageSource;
+            recentlyPlayedPlaylistSongs.FirstOrDefault().Artist = trackInfo.Artist;
 
             await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new Stack<SearchResultsObject>(recentlyPlayedPlaylistSongs))));
         }
@@ -91,10 +91,10 @@ namespace Android_Music_App
             var firstSong = savedSongs.FirstOrDefault();
             await FileManager.DownloadSingleSong(firstSong);
 
-            var trackInfo = Itunes.GetDataFromItunes(firstSong.Title.CleanTitle(), 1);
-            savedSongs.FirstOrDefault().Title = trackInfo.TrackName ?? firstSong.Title;
-            savedSongs.FirstOrDefault().ImageSource = trackInfo.ArtworkUrl100 ?? firstSong.ImageSource;
-            savedSongs.FirstOrDefault().Artist = trackInfo.ArtistName ?? firstSong.Title.GetArtistName();
+            var trackInfo = Itunes.GetDataFromItunes(firstSong, 1);
+            savedSongs.FirstOrDefault().Title = trackInfo.Title;
+            savedSongs.FirstOrDefault().ImageSource = trackInfo.ImageSource;
+            savedSongs.FirstOrDefault().Artist = trackInfo.Artist;
 
             await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new Stack<SearchResultsObject>(savedSongs))));
         }
