@@ -59,13 +59,6 @@ namespace Android_Music_App
             //Get saved songs and update UI with count
             _savedSongs = FileManager.GetSavedSongs();
             SavedSongsPlaylistCount.Text = $"{_savedSongs.Count} songs";
-
-            //Device.BeginInvokeOnMainThread(() =>
-            //{
-            //    RecentlyPlayedPlaylistsUIObj.ItemsSource = RecentlyPlayedPlaylists;
-            //    RecentPlaylistsSongCount.Text = $"{songcount} songs";
-            //    SavedSongsPlaylistCount.Text = $"{_savedSongs.Count} songs";
-            //});
         }
 
         protected override void OnAppearing() //on page load

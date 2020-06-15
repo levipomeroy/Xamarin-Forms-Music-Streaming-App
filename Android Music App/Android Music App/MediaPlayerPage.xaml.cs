@@ -20,7 +20,6 @@ namespace Android_Music_App
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MediaPlayerPage : ContentPage
     {
-        //PlaylistObject _selectedPlayList;
         SearchResultsObject _selectedItem;
         Stack<SearchResultsObject> _songsInPlayList;
         MediaPlayer _mediaPlayer;
@@ -30,12 +29,12 @@ namespace Android_Music_App
         int _playedCount;
         private const string FILE_DIR = "/storage/emulated/0/MusicApp/Queue/";
 
-        public MediaPlayerPage(/*PlaylistObject selectedItem, */Stack<SearchResultsObject> knownPlaylist)
+        public MediaPlayerPage(Stack<SearchResultsObject> knownPlaylist)
         {
             try
             {
                 InitializeComponent();
-                //_selectedPlayList = selectedItem;
+
                 _mediaPlayer = _mediaPlayer ?? new MediaPlayer();
                 _songsInPlayList = new Stack<SearchResultsObject>();
 
@@ -47,35 +46,13 @@ namespace Android_Music_App
                 _mediaPlayer.Looping = false;
                 _mediaPlayer.Completion += OnCompleteHandler;
 
-                //if (knownPlaylist == null)
-                //{
-                //    InitPlaylist();
-                //}
-                //else
-                //{
-                    StartKnownPlaylist(knownPlaylist);
-                //}  
+                StartKnownPlaylist(knownPlaylist);
             }
             catch (Exception ex)
             {
                 FileManager.LogError("Generic error from media player page", ex);
             }
         }
-
-        //Set up
-        //public async void InitPlaylist()
-        //{
-        //    try
-        //    {
-        //        await GetSongsInPlaylist(_selectedPlayList.Url);
-        //        await GetFirstSong();
-        //        await GetNextSectionOfSongsInPlaylist();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        FileManager.LogError("Error setting up media player page", ex);
-        //    }
-        //}
 
         public async void StartKnownPlaylist(Stack<SearchResultsObject> knownPlaylist)
         {
@@ -86,7 +63,6 @@ namespace Android_Music_App
                 FileManager.LogInfo("No songs in selected playlist at point of 'StartKnownPlaylist'");
             }
 
-            //await FileManager.DownloadSingleSong(_selectedItem);
             _downloadedCount++;
             await PlaySelectedSong();
 
@@ -94,26 +70,6 @@ namespace Android_Music_App
 
             await GetNextSectionOfSongsInPlaylist();
         }
-
-        //private async Task GetSongsInPlaylist(string playListUrl)
-        //{
-        //    var songsInPlayListClient = new PlaylistItemsSearch();
-        //    var songs = await songsInPlayListClient.GetPlaylistItems(playListUrl);
-        //    songs.Shuffle();
-        //    _songsInPlayList = new Stack<SearchResultsObject>(songs.Select(x => new SearchResultsObject(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
-        //}
-
-        //private async Task GetFirstSong()
-        //{
-        //    _selectedItem = _songsInPlayList.FirstOrDefault();
-        //    await FileManager.DownloadSingleSong(_selectedItem);
-        //    _downloadedCount++;
-        //    await PlaySelectedSong();
-
-        //    _songsInPlayList.Pop(); //already set to play
-        //}
-
-
 
         //Handlers 
         private void TimeElapsedHandler(object sender, ElapsedEventArgs e)
@@ -229,27 +185,11 @@ namespace Android_Music_App
         {
             try
             {
-                //set up media player for song
-                if (_mediaPlayer.IsPlaying)
-                {
-                    _mediaPlayer.Stop();
-                }
-                _mediaPlayer.Reset();
-
-                var fileName = Directory.GetFiles(FILE_DIR).FirstOrDefault(x => Path.GetFileName(x).Contains(_selectedItem.Id));
-                var filePath = Path.Combine(FILE_DIR, fileName);
-
-                await _mediaPlayer.SetDataSourceAsync(filePath);
-                _mediaPlayer.Prepare();
-                _mediaPlayer.Start();
-                _playedCount++;
-                _timer.Start();
-
-                //update song info
-                _tickCount = 0;
+                var isSavedSong = FileManager.IsSongSaved(_selectedItem);  ///////////////// <-------------- This list should really be in memory and avoid this IO for every song
+                //update song info UI
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    CurrentTime.Text = SongTimeFormat(_tickCount);
+                    CurrentTime.Text = SongTimeFormat(0);
                     TimeProgressBar.Progress = 0;
 
                     if (!string.IsNullOrWhiteSpace(_selectedItem.Artist))
@@ -261,7 +201,7 @@ namespace Android_Music_App
                     SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
                     SongImage.Source = _selectedItem.ImageSource;
                     PlayOrPauseButton.Text = "\U000f03e5"; //pause button
-                    if (FileManager.IsSongSaved(_selectedItem))                 ///////////////// <-------------- This list should really be in memory and avoid this IO for every song
+                    if (isSavedSong)                
                     {
                         HeartSong.Text = "\U000f02d1"; //filled in heart
                     }
@@ -270,6 +210,25 @@ namespace Android_Music_App
                         HeartSong.Text = "\U000f02d5"; //heart outline
                     }
                 });
+
+
+                //set up media player for song
+                if (_mediaPlayer.IsPlaying)
+                {
+                    _mediaPlayer.Stop();
+                }
+                _mediaPlayer.Reset();
+
+                var fileName = Directory.GetFiles(FILE_DIR).FirstOrDefault(x => Path.GetFileName(x).Contains(_selectedItem.Id));
+                var filePath = Path.Combine(FILE_DIR, fileName);
+
+                _mediaPlayer.SetDataSource(filePath);
+                _mediaPlayer.Prepare();
+                _mediaPlayer.Start();
+                _playedCount++;
+                _timer.Start();
+
+                _tickCount = 0;
             }
             catch (Exception ex)
             {

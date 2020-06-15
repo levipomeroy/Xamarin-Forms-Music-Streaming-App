@@ -61,9 +61,8 @@ namespace Android_Music_App.Services
             catch (Exception ex)
             {
                 FileManager.LogError("Error getting info from itunes", ex);
+                return song;
             }
-
-            return song;
         }
     }
 }
