@@ -21,7 +21,7 @@ namespace Android_Music_App
     public partial class MediaPlayerPage : ContentPage
     {
         SearchResultsObject _selectedItem;
-        Stack<SearchResultsObject> _songsInPlayList;
+        List<SearchResultsObject> _songsInPlayList;
         MediaPlayer _mediaPlayer;
         Timer _timer;
         int _tickCount;
@@ -29,14 +29,14 @@ namespace Android_Music_App
         int _playedCount;
         private const string FILE_DIR = "/storage/emulated/0/MusicApp/Queue/";
 
-        public MediaPlayerPage(Stack<SearchResultsObject> knownPlaylist)
+        public MediaPlayerPage(List<SearchResultsObject> knownPlaylist)
         {
             try
             {
                 InitializeComponent();
 
                 _mediaPlayer = _mediaPlayer ?? new MediaPlayer();
-                _songsInPlayList = new Stack<SearchResultsObject>();
+               // _songsInPlayList = new List<SearchResultsObject>();
 
                 _tickCount = 0;
                 _timer = new Timer();
@@ -54,7 +54,7 @@ namespace Android_Music_App
             }
         }
 
-        public async void StartKnownPlaylist(Stack<SearchResultsObject> knownPlaylist)
+        public async void StartKnownPlaylist(List<SearchResultsObject> knownPlaylist)
         {
             _songsInPlayList = knownPlaylist;
             _selectedItem = _songsInPlayList.FirstOrDefault();
@@ -66,7 +66,7 @@ namespace Android_Music_App
             _downloadedCount++;
             await PlaySelectedSong();
 
-            _songsInPlayList.Pop(); //already set to play
+           // _songsInPlayList.Pop(); //already set to play
 
             await GetNextSectionOfSongsInPlaylist();
         }
@@ -167,7 +167,16 @@ namespace Android_Music_App
             try
             {
                 _timer.Stop();
-                _selectedItem = _songsInPlayList.Pop(); //get next song
+
+                //After all played, shuffle and start over
+                if (_playedCount == _songsInPlayList.Count)
+                {
+                    _songsInPlayList.Shuffle();
+                    _playedCount = 0;
+                }
+
+                //_selectedItem = _songsInPlayList.Pop(); //get next song
+                _selectedItem = _songsInPlayList.GetItemByIndex(_playedCount);
 
                 await PlaySelectedSong();
                 if (_downloadedCount - _playedCount <= 3) //only 3 or less left on ready stack
@@ -186,31 +195,6 @@ namespace Android_Music_App
             try
             {
                 var isSavedSong = FileManager.IsSongSaved(_selectedItem);  ///////////////// <-------------- This list should really be in memory and avoid this IO for every song
-                //update song info UI
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    CurrentTime.Text = SongTimeFormat(0);
-                    TimeProgressBar.Progress = 0;
-
-                    if (!string.IsNullOrWhiteSpace(_selectedItem.Artist))
-                    {
-                        Artist.Text = _selectedItem.Artist;
-                        Artist.IsVisible = true;
-                    }
-                    SongTitle.Text = _selectedItem.Title.Replace($"{_selectedItem.Artist}-", string.Empty).CleanTitle();
-                    SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
-                    SongImage.Source = _selectedItem.ImageSource;
-                    PlayOrPauseButton.Text = "\U000f03e5"; //pause button
-                    if (isSavedSong)                
-                    {
-                        HeartSong.Text = "\U000f02d1"; //filled in heart
-                    }
-                    else
-                    {
-                        HeartSong.Text = "\U000f02d5"; //heart outline
-                    }
-                });
-
 
                 //set up media player for song
                 if (_mediaPlayer.IsPlaying)
@@ -229,6 +213,31 @@ namespace Android_Music_App
                 _timer.Start();
 
                 _tickCount = 0;
+
+                //update song info UI
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    CurrentTime.Text = SongTimeFormat(0);
+                    TimeProgressBar.Progress = 0;
+
+                    if (!string.IsNullOrWhiteSpace(_selectedItem.Artist))
+                    {
+                        Artist.Text = _selectedItem.Artist;
+                        Artist.IsVisible = true;
+                    }
+                    SongTitle.Text = _selectedItem.Title.Replace($"{_selectedItem.Artist}-", string.Empty).CleanTitle();
+                    SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
+                    SongImage.Source = _selectedItem.ImageSource;
+                    PlayOrPauseButton.Text = "\U000f03e5"; //pause button
+                    if (isSavedSong)
+                    {
+                        HeartSong.Text = "\U000f02d1"; //filled in heart
+                    }
+                    else
+                    {
+                        HeartSong.Text = "\U000f02d5"; //heart outline
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -238,7 +247,8 @@ namespace Android_Music_App
 
         public async Task GetNextSectionOfSongsInPlaylist()
         {
-            for (int i = 0; i < 10 && i < _songsInPlayList.Count(); i++)
+            var startCount = _downloadedCount;
+            for (int i = startCount; i < 10 && i < _songsInPlayList.Count(); i++)
             {
                 var song = _songsInPlayList.GetItemByIndex(i);
                 await FileManager.DownloadSingleSong(song);

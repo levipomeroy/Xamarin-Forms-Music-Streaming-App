@@ -42,7 +42,7 @@ namespace Android_Music_App
             var songsInPlayListClient = new PlaylistItemsSearch();
             var songs = await songsInPlayListClient.GetPlaylistItems(selectedPlaylist.Url);
             songs.Shuffle();
-            var chosenPlaylist = new Stack<SearchResultsObject>(songs.Select(x => new SearchResultsObject(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
+            var chosenPlaylist = new List<SearchResultsObject>(songs.Select(x => new SearchResultsObject(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
 
             //Download first song in playlist
             var firstSong = chosenPlaylist.FirstOrDefault();
@@ -79,7 +79,7 @@ namespace Android_Music_App
             recentlyPlayedPlaylistSongs.FirstOrDefault().ImageSource = trackInfo.ImageSource;
             recentlyPlayedPlaylistSongs.FirstOrDefault().Artist = trackInfo.Artist;
 
-            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new Stack<SearchResultsObject>(recentlyPlayedPlaylistSongs))));
+            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new List<SearchResultsObject>(recentlyPlayedPlaylistSongs))));
         }
 
         public async void LoadSavedSongs()
@@ -96,7 +96,7 @@ namespace Android_Music_App
             savedSongs.FirstOrDefault().ImageSource = trackInfo.ImageSource;
             savedSongs.FirstOrDefault().Artist = trackInfo.Artist;
 
-            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new Stack<SearchResultsObject>(savedSongs))));
+            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new List<SearchResultsObject>(savedSongs))));
         }
 
         //helper method
