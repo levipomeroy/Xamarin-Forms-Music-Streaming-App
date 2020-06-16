@@ -4,12 +4,11 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+              NavigationPage.HasNavigationBar="False"
              x:Class="Android_Music_App.LoadingPage">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Loading..."
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+        <StackLayout x:Name="mainLoadingLayout" Orientation="Vertical" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" WidthRequest="400" HeightRequest="400">
+            <ActivityIndicator IsRunning="true" Color="White" Scale="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
