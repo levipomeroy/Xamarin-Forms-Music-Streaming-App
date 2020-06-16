@@ -127,6 +127,8 @@ namespace Android_Music_App
             _timer.Stop();
             _mediaPlayer.Reset();
             _mediaPlayer.Release();
+
+            Navigation.PushModalAsync(new NavigationPage(new MainPage()));
         }
 
         private void SaveSongClicked(object sender, EventArgs e)

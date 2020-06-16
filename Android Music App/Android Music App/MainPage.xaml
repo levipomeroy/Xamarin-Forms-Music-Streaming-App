@@ -62,7 +62,99 @@
 
                 <!--Made for you-->
                 <Label FontFamily="{StaticResource app-font}" Text="Made For You" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
-                <StackLayout Orientation="Horizontal">
+                
+                <!--//test 4 image grid custom playlists-->
+                <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" HeightRequest="200">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"></ColumnDefinition>
+                        <ColumnDefinition Width="50*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <!--Saved songs-->
+                    <Grid x:Name="savedSongsPlayListButton" Grid.Column="0" Padding="10,0,10,0" ColumnSpacing="0" RowSpacing="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50*"></ColumnDefinition>
+                            <ColumnDefinition Width="50*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="37.5*"/>
+                            <RowDefinition Height="37.5*"/>
+                            <RowDefinition Height="15*"/>
+                            <RowDefinition Height="10*"/>
+                        </Grid.RowDefinitions>
+                        <Image x:Name="savedSongListImage00" Grid.Row="0" Grid.Column="0" Aspect="AspectFill"/>
+                        <Image x:Name="savedSongListImage01" Grid.Row="0" Grid.Column="1" Aspect="AspectFill"/>
+                        <Image x:Name="savedSongListImage10" Grid.Row="1" Grid.Column="0" Aspect="AspectFill"/>
+                        <Image x:Name="savedSongListImage11" Grid.Row="1" Grid.Column="1" Aspect="AspectFill"/>
+                        <Label  VerticalOptions="Center"
+                        FontFamily="{StaticResource app-font}" Grid.Row="2" Grid.ColumnSpan="2"
+                        TextColor="White"
+                        Text="Your favorite songs"
+                        FontSize="Small" />
+
+                        <Label x:Name="SavedSongsPlaylistCount" Grid.Row="3" Grid.ColumnSpan="2"
+                        TextColor="LightGray"
+                        FontFamily="{StaticResource app-font}"
+                        VerticalOptions="Start" FontSize="Micro" />
+                    </Grid>
+                    
+                    <!--custom playlist songs-->
+                        <Grid x:Name="customPlaylistsButton" Grid.Column="1" Padding="10,0,10,0" ColumnSpacing="0" RowSpacing="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50*"></ColumnDefinition>
+                            <ColumnDefinition Width="50*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="37.5*"/>
+                            <RowDefinition Height="37.5*"/>
+                            <RowDefinition Height="15*"/>
+                            <RowDefinition Height="10*"/>
+                        </Grid.RowDefinitions>
+                        <Image x:Name="recentPlaylistsPlaylistImage00" Grid.Row="0" Grid.Column="0" Aspect="AspectFill"/>
+                        <Image x:Name="recentPlaylistsPlaylistImage01" Grid.Row="0" Grid.Column="1" Aspect="AspectFill"/>
+                        <Image x:Name="recentPlaylistsPlaylistImage10" Grid.Row="1" Grid.Column="0" Aspect="AspectFill"/>
+                        <Image x:Name="recentPlaylistsPlaylistImage11" Grid.Row="1" Grid.Column="1" Aspect="AspectFill"/>
+                        <Label  VerticalOptions="Center" Grid.Row="2" Grid.ColumnSpan="2"
+                        FontFamily="{StaticResource app-font}"
+                        TextColor="White"
+                        Text="Todays mix"
+                        FontSize="Small" />
+
+                        <Label x:Name="RecentPlaylistsSongCount" Grid.Row="3" Grid.ColumnSpan="2"
+                        Text="x songs"
+                        TextColor="LightGray"
+                        FontFamily="{StaticResource app-font}"
+                        VerticalOptions="Start" FontSize="Micro" />
+                    </Grid>
+
+                </Grid>
+                
+                <!--<StackLayout Orientation="Horizontal">
+                    <StackLayout Orientation="Vertical" WidthRequest="140">
+                        <StackLayout Orientation="Horizontal" WidthRequest="140" HeightRequest="70">
+                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
+                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal" WidthRequest="140" HeightRequest="70">
+                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit" />
+                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
+                        </StackLayout>
+                    </StackLayout>
+
+                    <StackLayout Orientation="Vertical" WidthRequest="140">
+                        <StackLayout Orientation="Horizontal" WidthRequest="140" HeightRequest="70">
+                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
+                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal" WidthRequest="140" HeightRequest="70">
+                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit" />
+                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
+                        </StackLayout>
+                    </StackLayout>
+                </StackLayout>-->
+                
+                
+                <!--<StackLayout Orientation="Horizontal">
                     <StackLayout Orientation="Vertical" WidthRequest="120">
                         <Button Style="{StaticResource MaterialIcons}" Text="&#x000f02d2;" HorizontalOptions="Start" FontSize="110" TextColor="White" Clicked="SavedSongsPlayListClicked"/>
                         <Label  VerticalOptions="Center"
@@ -91,11 +183,11 @@
                         FontFamily="{StaticResource app-font}"
                         VerticalOptions="Start" FontSize="Micro" />
                     </StackLayout>
-                </StackLayout>
+                </StackLayout>-->
 
                 <!--Recently Played-->
                 <Label FontFamily="{StaticResource app-font}" Text="Recently Played" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
-                <CollectionView x:Name="RecentlyPlayedPlaylistsUIObj" ItemsSource="{Binding RecentlyPlayedPlaylists}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="PlaylistPickedFromList" HeightRequest="200">
+                <CollectionView x:Name="RecentlyPlayedPlaylistsUIObj" ItemsSource="{Binding RecentlyPlayedPlaylists}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="PlaylistPickedFromList" HeightRequest="220">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout Padding="10" Margin="10" WidthRequest="120" Orientation="Vertical">
@@ -124,7 +216,7 @@
 
                 <!--Popular-->
                 <Label FontFamily="{StaticResource app-font}" Text="Popular Playlists" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
-                <CollectionView x:Name="PopularPlaylists" ItemsSource="{Binding PopularPlaylistResults}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="PlaylistPickedFromList" HeightRequest="200">
+                <CollectionView x:Name="PopularPlaylists" ItemsSource="{Binding PopularPlaylistResults}" ItemsLayout="HorizontalList" SelectionMode="Single" SelectionChanged="PlaylistPickedFromList" HeightRequest="220">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout Padding="10" Margin="10" WidthRequest="120" Orientation="Vertical">

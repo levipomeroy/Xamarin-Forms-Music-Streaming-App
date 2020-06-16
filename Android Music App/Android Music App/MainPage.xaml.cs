@@ -1,5 +1,6 @@
 ﻿using Android_Music_App.Models;
 using Android_Music_App.Services;
+using AngleSharp.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -59,6 +60,33 @@ namespace Android_Music_App
             //Get saved songs and update UI with count
             _savedSongs = FileManager.GetSavedSongs();
             SavedSongsPlaylistCount.Text = $"{_savedSongs.Count} songs";
+
+            _savedSongs.Shuffle();
+            savedSongListImage00.Source = _savedSongs.GetItemByIndex(0).ImageSource;
+            savedSongListImage01.Source = _savedSongs.GetItemByIndex(1).ImageSource;
+            savedSongListImage10.Source = _savedSongs.GetItemByIndex(2).ImageSource;
+            savedSongListImage11.Source = _savedSongs.GetItemByIndex(3).ImageSource;
+
+            var playlistCopy = RecentlyPlayedPlaylists.ToList();
+            playlistCopy.Shuffle();
+            recentPlaylistsPlaylistImage00.Source = playlistCopy.GetItemByIndex(0).ImageSource;
+            recentPlaylistsPlaylistImage01.Source = playlistCopy.GetItemByIndex(1).ImageSource;
+            recentPlaylistsPlaylistImage10.Source = playlistCopy.GetItemByIndex(2).ImageSource;
+            recentPlaylistsPlaylistImage11.Source = playlistCopy.GetItemByIndex(3).ImageSource;
+
+            //Tap gesture handler for custom playlist
+            var tapGestureRecognizer = new TapGestureRecognizer();
+            tapGestureRecognizer.Tapped += (s, e) => {
+                Navigation.PushModalAsync(new NavigationPage(new LoadingPage(recentlyPlayedPlaylist: true)));
+            };
+            customPlaylistsButton.GestureRecognizers.Add(tapGestureRecognizer);
+
+            //Tap gesture handler for saved song playlist
+            var tapGestureRecognizer2 = new TapGestureRecognizer();
+            tapGestureRecognizer2.Tapped += (s, e) => {
+                Navigation.PushModalAsync(new NavigationPage(new LoadingPage(savedSongs: true)));
+            };
+            savedSongsPlayListButton.GestureRecognizers.Add(tapGestureRecognizer2);
         }
 
         protected override void OnAppearing() //on page load
@@ -107,18 +135,6 @@ namespace Android_Music_App
 
             await Navigation.PushModalAsync(new NavigationPage(new LoadingPage(selection)));
         }
-
-       
-        public async void SavedSongsPlayListClicked(object sender, System.EventArgs e)
-        {
-            await Navigation.PushModalAsync(new NavigationPage(new LoadingPage(savedSongs: true)));
-        }
-
-        public async void RecentlyPlayedPlayListClicked(object sender, System.EventArgs e)
-        {
-            await Navigation.PushModalAsync(new NavigationPage(new LoadingPage(recentlyPlayedPlaylist: true)));
-        }
-
 
         private void SearchBarOnTextChanged(object sender, TextChangedEventArgs textChangedEventArgs)
         {
