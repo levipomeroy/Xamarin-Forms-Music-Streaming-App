@@ -20,7 +20,7 @@ namespace Android_Music_App
         private ObservableCollection<PlaylistObject> YoutubeSearchResults;
         private ObservableCollection<PlaylistObject> PopularPlaylistResults;
         private ObservableCollection<PlaylistObject> RecentlyPlayedPlaylists;
-        private List<SearchResultsObject> _savedSongs;
+        private List<Song> _savedSongs;
         private PlaylistSearch _playlistSearchClient;
         private PlaylistItemsSearch _playlistitemsClient;
 
@@ -33,7 +33,6 @@ namespace Android_Music_App
             try
             {
                 FileManager.InitFolders();
-                FileManager.CleanUpMusicFolder();
 
                 InitPlaylists();
             }
@@ -106,7 +105,7 @@ namespace Android_Music_App
             var playlists = await _playlistSearchClient.GetPlaylists("top popular hits", 1);
             playlists.Shuffle();
 
-            PopularPlaylistResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle().CleanTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
+            PopularPlaylistResults = new ObservableCollection<PlaylistObject>(playlists.Select(x => new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
             PopularPlaylists.ItemsSource = PopularPlaylistResults;
         }
 
@@ -114,7 +113,7 @@ namespace Android_Music_App
         {
             //var playlistClient = new PlaylistSearch();
             var playlists = await _playlistSearchClient.GetPlaylists(MusicSearchBar.Text, 1);
-            YoutubeSearchResults = new ObservableCollection<PlaylistObject>(playlists.Select(x=> new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle().CleanTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
+            YoutubeSearchResults = new ObservableCollection<PlaylistObject>(playlists.Select(x=> new PlaylistObject(x.getId(), x.getThumbnail(), x.getTitle(), x.getUrl(), $"{x.getVideoCount()} songs")));
 
             MusicResults.ItemsSource = YoutubeSearchResults;
             MusicResults.IsVisible = true; //show search results

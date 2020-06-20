@@ -51,22 +51,18 @@ namespace Android_Music_App
             AddNewLoadingStatus("Shuffling");
             songs.Shuffle();
 
-            var chosenPlaylist = new List<SearchResultsObject>(songs.Select(x => new SearchResultsObject(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
+            var chosenPlaylist = new List<Song>(songs.Select(x => new Song(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
 
             //Download first song in playlist
-            PreviousStepComplete();
-            AddNewLoadingStatus("Downloading");
+            //PreviousStepComplete();
+            //AddNewLoadingStatus("Downloading");
 
             var firstSong = chosenPlaylist.FirstOrDefault();
-            await FileManager.DownloadSingleSong(firstSong);
+            //await FileManager.DownloadSingleSong(firstSong);
 
             PreviousStepComplete();
             AddNewLoadingStatus("Retrieving album art");
-
-            var trackInfo = Itunes.GetDataFromItunes(firstSong, 1);
-            chosenPlaylist.FirstOrDefault().Title = trackInfo.Title;
-            chosenPlaylist.FirstOrDefault().ImageSource = trackInfo.ImageSource;
-            chosenPlaylist.FirstOrDefault().Artist = trackInfo.Artist;
+            chosenPlaylist.FirstOrDefault().GetDataFromItunes(); 
 
             PreviousStepComplete();
             AddNewLoadingStatus("Playing");
@@ -79,7 +75,7 @@ namespace Android_Music_App
         {
             AddNewLoadingStatus("Getting playlist info");
 
-            var recentlyPlayedPlaylistSongs = new List<SearchResultsObject>();
+            var recentlyPlayedPlaylistSongs = new List<Song>();
             var songsInPlayListClient = new PlaylistItemsSearch();
 
             PreviousStepComplete();
@@ -88,7 +84,7 @@ namespace Android_Music_App
             foreach (var playlist in FileManager.GetPlaylists().Take(4))
             {
                 var songs = await songsInPlayListClient.GetPlaylistItems(playlist.Url);
-                recentlyPlayedPlaylistSongs.AddRange(songs.Select(x => new SearchResultsObject(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
+                recentlyPlayedPlaylistSongs.AddRange(songs.Select(x => new Song(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
             }
 
             PreviousStepComplete();
@@ -97,20 +93,18 @@ namespace Android_Music_App
 
             //Download first song in playlist
             PreviousStepComplete();
-            AddNewLoadingStatus("Downloading");
+            AddNewLoadingStatus("Getting stream");
             var firstSong = recentlyPlayedPlaylistSongs.FirstOrDefault();
-            await FileManager.DownloadSingleSong(firstSong);
+
+            //await FileManager.DownloadSingleSong(firstSong);
 
             PreviousStepComplete();
             AddNewLoadingStatus("Retrieving album art");
-            var trackInfo = Itunes.GetDataFromItunes(firstSong, 1);
-            recentlyPlayedPlaylistSongs.FirstOrDefault().Title = trackInfo.Title;
-            recentlyPlayedPlaylistSongs.FirstOrDefault().ImageSource = trackInfo.ImageSource;
-            recentlyPlayedPlaylistSongs.FirstOrDefault().Artist = trackInfo.Artist;
+            recentlyPlayedPlaylistSongs.FirstOrDefault().GetDataFromItunes();
 
             PreviousStepComplete();
             AddNewLoadingStatus("Playing");
-            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new List<SearchResultsObject>(recentlyPlayedPlaylistSongs))));
+            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new List<Song>(recentlyPlayedPlaylistSongs))));
         }
 
         public async void LoadSavedSongs()
@@ -127,18 +121,16 @@ namespace Android_Music_App
 
             //Download first song in playlist
             var firstSong = savedSongs.FirstOrDefault();
-            await FileManager.DownloadSingleSong(firstSong);
+            //await FileManager.DownloadSingleSong(firstSong);
 
             PreviousStepComplete();
             AddNewLoadingStatus("Retrieving album art");
-            var trackInfo = Itunes.GetDataFromItunes(firstSong, 1);
-            savedSongs.FirstOrDefault().Title = trackInfo.Title;
-            savedSongs.FirstOrDefault().ImageSource = trackInfo.ImageSource;
-            savedSongs.FirstOrDefault().Artist = trackInfo.Artist;
+            savedSongs.FirstOrDefault().GetDataFromItunes();
+
 
             PreviousStepComplete();
             AddNewLoadingStatus("Playing");
-            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new List<SearchResultsObject>(savedSongs))));
+            await Navigation.PushModalAsync(new NavigationPage(new MediaPlayerPage(new List<Song>(savedSongs))));
         }
 
         //helper method

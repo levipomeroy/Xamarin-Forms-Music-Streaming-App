@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace Android_Music_App.Models
@@ -18,6 +20,7 @@ namespace Android_Music_App.Models
             Title = title;
             Url = url;
             VideoCount = videoCount;
+            CleanTitle();
         }
         public PlaylistObject() { }
 
@@ -28,6 +31,25 @@ namespace Android_Music_App.Models
             Title = theOG.Title;
             Url = theOG.Url;
             VideoCount = theOG.VideoCount;
+        }
+
+        public void CleanTitle()
+        {
+            //Remove parathesis 
+            Title = Regex.Replace(Title, @"\([^()]*\)", string.Empty);
+            //Remove brackets
+            Title = Regex.Replace(Title, @"\[.*?\]", string.Empty);
+            //Convert to title case 
+            Title = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Title.ToLower());
+            //remove emojis and junk 
+            Title = Regex.Replace(Title, @"[^\u0000-\u007F]+", "");
+            //standardize seperator 
+            Title = Regex.Replace(Title, "[+|:]", " - ");
+            //show ampersand correctly
+            Title = Title.Replace("/U0026", "&");
+            //remove multiple spaces
+            Title = Regex.Replace(Title, @"\s+", " ");
+            Title = Title.Trim();
         }
     }
 }

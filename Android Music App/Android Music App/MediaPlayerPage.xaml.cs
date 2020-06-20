@@ -2,49 +2,38 @@
 using Android_Music_App.Models;
 using Android_Music_App.Services;
 using AngleSharp.Common;
-using Java.Net;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Web;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using XFGloss;
-using YouTubeSearch;
 
 namespace Android_Music_App
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MediaPlayerPage : ContentPage
     {
-        SearchResultsObject _selectedItem;
-        List<SearchResultsObject> _songsInPlayList;
+        Song _selectedItem;
+        List<Song> _songsInPlayList;
         MediaPlayer _mediaPlayer;
         Timer _timer;
         int _tickCount;
-        int _downloadedCount;
         int _playedCount;
         private const string FILE_DIR = "/storage/emulated/0/MusicApp/Queue/";
 
-        public MediaPlayerPage(List<SearchResultsObject> knownPlaylist)
+        public MediaPlayerPage(List<Song> knownPlaylist)
         {
             try
             {
-                InitializeComponent();
-
-                _mediaPlayer = _mediaPlayer ?? new MediaPlayer();
-               // _songsInPlayList = new List<SearchResultsObject>();
+                _mediaPlayer = new MediaPlayer();
+                _mediaPlayer.Completion += OnCompleteHandler;
 
                 _tickCount = 0;
                 _timer = new Timer();
                 _timer.Interval = 1000; // 1 second
                 _timer.Elapsed += TimeElapsedHandler;
-
-                _mediaPlayer.Looping = false;
-                _mediaPlayer.Completion += OnCompleteHandler;
 
                 StartKnownPlaylist(knownPlaylist);
             }
@@ -52,9 +41,11 @@ namespace Android_Music_App
             {
                 FileManager.LogError("Generic error from media player page", ex);
             }
+            InitializeComponent();
+
         }
 
-        public async void StartKnownPlaylist(List<SearchResultsObject> knownPlaylist)
+        public async void StartKnownPlaylist(List<Song> knownPlaylist)
         {
             _songsInPlayList = knownPlaylist;
             _selectedItem = _songsInPlayList.FirstOrDefault();
@@ -63,12 +54,7 @@ namespace Android_Music_App
                 FileManager.LogInfo("No songs in selected playlist at point of 'StartKnownPlaylist'");
             }
 
-            _downloadedCount++;
-            await PlaySelectedSong();
-
-           // _songsInPlayList.Pop(); //already set to play
-
-            await GetNextSectionOfSongsInPlaylist();
+            await PlaySelectedSong().ConfigureAwait(false);
         }
 
         //Handlers 
@@ -93,12 +79,12 @@ namespace Android_Music_App
         private async void OnCompleteHandler(object sender, EventArgs e)
         {
             _mediaPlayer.Reset();
-            await Next();
+            await Next().ConfigureAwait(false);
         }
 
         private async void NextClicked(object sender, EventArgs e)
         {
-            await Next();
+            await Next().ConfigureAwait(false);
         }
 
         private void PlayPausedClicked(object sender, EventArgs e)
@@ -177,14 +163,9 @@ namespace Android_Music_App
                     _playedCount = 0;
                 }
 
-                //_selectedItem = _songsInPlayList.Pop(); //get next song
                 _selectedItem = _songsInPlayList.GetItemByIndex(_playedCount);
 
-                await PlaySelectedSong();
-                if (_downloadedCount - _playedCount <= 3) //only 3 or less left on ready stack
-                {
-                    await GetNextSectionOfSongsInPlaylist(); //get more songs 
-                }
+                await PlaySelectedSong().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -196,7 +177,9 @@ namespace Android_Music_App
         {
             try
             {
-                var isSavedSong = FileManager.IsSongSaved(_selectedItem);  ///////////////// <-------------- This list should really be in memory and avoid this IO for every song
+                var isSavedSong = FileManager.IsSongSaved(_selectedItem);  ///////////////// <-------------- This list should really be in memory and avoid this IO for every song, put on song instance as property with getter
+
+                _selectedItem.GetDataFromItunes();
 
                 //set up media player for song
                 if (_mediaPlayer.IsPlaying)
@@ -204,66 +187,102 @@ namespace Android_Music_App
                     _mediaPlayer.Stop();
                 }
                 _mediaPlayer.Reset();
+                _mediaPlayer = new MediaPlayer();
+                _mediaPlayer.Completion += OnCompleteHandler;
+                _mediaPlayer.Prepared += (s, e) =>
+                {
+                    if (_mediaPlayer.IsPlaying)
+                    {
+                        _mediaPlayer.Stop();
+                    }
+                    _mediaPlayer.Start();
+                    _playedCount++;
 
-                var fileName = Directory.GetFiles(FILE_DIR).FirstOrDefault(x => Path.GetFileName(x).Contains(_selectedItem.Id));
-                var filePath = Path.Combine(FILE_DIR, fileName);
+                    _timer.Start();
 
-                _mediaPlayer.SetDataSource(filePath);
-                _mediaPlayer.Prepare();
-                _mediaPlayer.Start();
-                _playedCount++;
-                _timer.Start();
+                    //update song info UI
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        CurrentTime.Text = SongTimeFormat(0);
+                        TimeProgressBar.Progress = 0;
+
+                        if (!string.IsNullOrWhiteSpace(_selectedItem.Artist))
+                        {
+                            Artist.Text = _selectedItem.Artist;
+                            Artist.IsVisible = true;
+                            _selectedItem.Title.Replace($"{_selectedItem.Artist}-", string.Empty).Replace($"{_selectedItem.Artist} -", string.Empty).Replace($"{_selectedItem.Artist}", string.Empty);
+                        }
+                        SongTitle.Text = _selectedItem.Title;
+                        SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
+                        SongImage.Source = _selectedItem.ImageSource;
+                        PlayOrPauseButton.Text = "\U000f03e5"; //pause button
+                        if (isSavedSong)
+                        {
+                            HeartSong.Text = "\U000f02d1"; //filled in heart
+                        }
+                        else
+                        {
+                            HeartSong.Text = "\U000f02d5"; //heart outline
+                        }
+                    });
+                };
+
+                _mediaPlayer.SetDataSource(await _selectedItem.GetStream().ConfigureAwait(false));
+                _mediaPlayer.PrepareAsync();
 
                 _tickCount = 0;
 
-                //update song info UI
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    CurrentTime.Text = SongTimeFormat(0);
-                    TimeProgressBar.Progress = 0;
+                ////update song info UI
+                //Device.BeginInvokeOnMainThread(() =>
+                //{
+                //    CurrentTime.Text = SongTimeFormat(0);
+                //    TimeProgressBar.Progress = 0;
 
-                    if (!string.IsNullOrWhiteSpace(_selectedItem.Artist))
-                    {
-                        Artist.Text = _selectedItem.Artist;
-                        Artist.IsVisible = true;
-                    }
-                    SongTitle.Text = _selectedItem.Title.Replace($"{_selectedItem.Artist}-", string.Empty).CleanTitle();
-                    SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
-                    SongImage.Source = _selectedItem.ImageSource;
-                    PlayOrPauseButton.Text = "\U000f03e5"; //pause button
-                    if (isSavedSong)
-                    {
-                        HeartSong.Text = "\U000f02d1"; //filled in heart
-                    }
-                    else
-                    {
-                        HeartSong.Text = "\U000f02d5"; //heart outline
-                    }
-                });
+                //    if (!string.IsNullOrWhiteSpace(_selectedItem.Artist))
+                //    {
+                //        Artist.Text = _selectedItem.Artist;
+                //        Artist.IsVisible = true;
+                //        _selectedItem.Title.Replace($"{_selectedItem.Artist}-", string.Empty).Replace($"{_selectedItem.Artist} -", string.Empty).Replace($"{_selectedItem.Artist}", string.Empty);
+                //    }
+                //    SongTitle.Text = _selectedItem.Title.CleanTitle();
+                //    SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);
+                //    SongImage.Source = _selectedItem.ImageSource;
+                //    PlayOrPauseButton.Text = "\U000f03e5"; //pause button
+                //    if (isSavedSong)
+                //    {
+                //        HeartSong.Text = "\U000f02d1"; //filled in heart
+                //    }
+                //    else
+                //    {
+                //        HeartSong.Text = "\U000f02d5"; //heart outline
+                //    }
+                //});
             }
             catch (Exception ex)
             {
-                FileManager.LogError("Error playing selected song", ex);
+                FileManager.LogError($"Error playing selected song, Title: {_selectedItem.Title}, Artist: {_selectedItem.Artist}, Id: {_selectedItem.Id}", ex);
+                _playedCount++;
+                await Next().ConfigureAwait(false);
             }
         }
 
-        public async Task GetNextSectionOfSongsInPlaylist()
-        {
-            var startCount = _downloadedCount;
-            for (int i = startCount; i < 10 && i < _songsInPlayList.Count(); i++)
-            {
-                var song = _songsInPlayList.GetItemByIndex(i);
-                await FileManager.DownloadSingleSong(song);
+        //public async Task GetNextSectionOfSongsInPlaylist()
+        //{
+        //    var startCount = _downloadedCount;
 
-                var trackInfo = Itunes.GetDataFromItunes(song, 1);
-                _songsInPlayList.GetItemByIndex(i).Title = trackInfo.Title;
-                _songsInPlayList.GetItemByIndex(i).ImageSource = trackInfo.ImageSource;
-                _songsInPlayList.GetItemByIndex(i).Artist = trackInfo.Artist;
+        //    for (int i = startCount; i <= 10 && i < _songsInPlayList.Count(); i++)
+        //    {
+        //        SongDuration.StreamUrl = await FileManager.GetStreamForSong(_songsInPlayList.GetItemByIndex(i)).ConfigureAwait(false);
 
-                _downloadedCount++;
-            }
-        }
+        //        var trackInfo = Itunes.GetDataFromItunes(song, 1);
+        //        _songsInPlayList.GetItemByIndex(i).Title = trackInfo.Title;
+        //        _songsInPlayList.GetItemByIndex(i).ImageSource = trackInfo.ImageSource;
+        //        _songsInPlayList.GetItemByIndex(i).Artist = trackInfo.Artist;
 
+        //        _downloadedCount++;
+        //    }
+
+        //}
 
 
         //helper methods
@@ -273,11 +292,11 @@ namespace Android_Music_App
             return string.Format("{0:D1}:{1:D2}", timeSpanPlaying.Minutes, timeSpanPlaying.Seconds);
         }
 
-        public string GetSongIdFromUrl(string url)
-        {
-            var query = HttpUtility.ParseQueryString(new Uri(url).Query);
-            return query["v"];
-        }
+        //public string GetSongIdFromUrl(string url)
+        //{
+        //    var query = HttpUtility.ParseQueryString(new Uri(url).Query);
+        //    return query["v"];
+        //}
 
     }
 }
