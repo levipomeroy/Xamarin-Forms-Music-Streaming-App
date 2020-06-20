@@ -34,7 +34,7 @@ namespace Android_Music_App.Models
         }
         public Song() { }
 
-        public async Task<string> GetStream()
+        public async Task GetStream()
         {
             try
             {
@@ -43,12 +43,11 @@ namespace Android_Music_App.Models
                 var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate(); // get highest bitrate audio-only stream
                 //var streamInfo = streamManifest.GetAudioOnly().OrderBy(x => x.Size).FirstOrDefault(); // get smallest audio file
 
-                return streamInfo.Url;
+                StreamUrl = streamInfo.Url;
             }
             catch (Exception ex)
             {
                 FileManager.LogError($"Error getting stream for song - Title: {Title}, Id: {Id}", ex);
-                return null;
             }
         }
 
@@ -56,8 +55,7 @@ namespace Android_Music_App.Models
         {
             try
             {
-                CleanTitle();
-                GetArtistName();
+                
 
                 var searchFor = Title.ToLower()
                     .Replace("official", "")
@@ -65,9 +63,17 @@ namespace Android_Music_App.Models
                     .Replace("video", "")
                     .Replace("lyrics", "");
 
+                CleanTitle();
+                GetArtistName();
+
                 if (searchFor.Contains("ft."))
                 {
                     searchFor = searchFor.Substring(0, Title.ToLower().IndexOf("ft."));
+                }
+
+                if (!string.IsNullOrWhiteSpace(Artist))
+                {
+                    searchFor = $"{Artist} {searchFor}";
                 }
 
                 var result = string.Empty;

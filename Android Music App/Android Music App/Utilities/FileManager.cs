@@ -118,7 +118,6 @@ namespace Android_Music_App.Services
             var savedSongs = GetSavedSongs();
             if (!savedSongs.Any(x => x.Id == song.Id))  //if not already saved
             {
-                song.CleanTitle();  // clean it before writing it
                 savedSongs.Insert(0, song); //add newly liked songs to beggining
             }
 

@@ -1,11 +1,8 @@
 ﻿using Android_Music_App.Models;
 using Android_Music_App.Services;
-using AngleSharp.Dom;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -44,25 +41,22 @@ namespace Android_Music_App
             //Get songs in playlist
             PreviousStepComplete();
             AddNewLoadingStatus("Gathering songs in playlist");
-
             var songsInPlayListClient = new PlaylistItemsSearch();
             var songs = await songsInPlayListClient.GetPlaylistItems(selectedPlaylist.Url);
+
             PreviousStepComplete();
             AddNewLoadingStatus("Shuffling");
             songs.Shuffle();
 
             var chosenPlaylist = new List<Song>(songs.Select(x => new Song(x.getTitle(), x.getThumbnail(), GetSongIdFromUrl(x.getUrl()))));
 
-            //Download first song in playlist
-            //PreviousStepComplete();
-            //AddNewLoadingStatus("Downloading");
-
-            var firstSong = chosenPlaylist.FirstOrDefault();
-            //await FileManager.DownloadSingleSong(firstSong);
-
             PreviousStepComplete();
             AddNewLoadingStatus("Retrieving album art");
-            chosenPlaylist.FirstOrDefault().GetDataFromItunes(); 
+            chosenPlaylist.FirstOrDefault().GetDataFromItunes();
+
+            PreviousStepComplete();
+            AddNewLoadingStatus("Getting stream");
+            await chosenPlaylist.FirstOrDefault().GetStream();
 
             PreviousStepComplete();
             AddNewLoadingStatus("Playing");
@@ -91,16 +85,13 @@ namespace Android_Music_App
             AddNewLoadingStatus("Shuffling");
             recentlyPlayedPlaylistSongs.Shuffle();
 
-            //Download first song in playlist
-            PreviousStepComplete();
-            AddNewLoadingStatus("Getting stream");
-            var firstSong = recentlyPlayedPlaylistSongs.FirstOrDefault();
-
-            //await FileManager.DownloadSingleSong(firstSong);
-
             PreviousStepComplete();
             AddNewLoadingStatus("Retrieving album art");
             recentlyPlayedPlaylistSongs.FirstOrDefault().GetDataFromItunes();
+
+            PreviousStepComplete();
+            AddNewLoadingStatus("Getting stream");
+            await recentlyPlayedPlaylistSongs.FirstOrDefault().GetStream();
 
             PreviousStepComplete();
             AddNewLoadingStatus("Playing");
@@ -119,14 +110,13 @@ namespace Android_Music_App
             AddNewLoadingStatus("Shuffling");
             savedSongs.Shuffle();
 
-            //Download first song in playlist
-            var firstSong = savedSongs.FirstOrDefault();
-            //await FileManager.DownloadSingleSong(firstSong);
-
             PreviousStepComplete();
             AddNewLoadingStatus("Retrieving album art");
             savedSongs.FirstOrDefault().GetDataFromItunes();
 
+            PreviousStepComplete();
+            AddNewLoadingStatus("Getting stream");
+            await savedSongs.FirstOrDefault().GetStream();
 
             PreviousStepComplete();
             AddNewLoadingStatus("Playing");
@@ -142,19 +132,26 @@ namespace Android_Music_App
 
         public void AddNewLoadingStatus(string status)
         {
-            mainLoadingLayout.Children.Add(new Label
+            Device.BeginInvokeOnMainThread(() =>
             {
-                Text = status,
-                HorizontalOptions = LayoutOptions.Center,
-                FontSize = 20,
-                Style = Application.Current.Resources["MaterialIcons"] as Style
+                mainLoadingLayout.Children.Add(new Label
+                {
+                    Text = status,
+                    Padding = 5,
+                    HorizontalOptions = LayoutOptions.Center,
+                    FontSize = 20,
+                    Style = Application.Current.Resources["MaterialIcons"] as Style
+                });
             });
+          
         }
 
         public void PreviousStepComplete()
         {
-            (mainLoadingLayout.Children.LastOrDefault() as Label).Text += "\t\U000f05e0";
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                (mainLoadingLayout.Children.LastOrDefault() as Label).Text += "\t\U000f05e0";
+            });
         }
-
     }
 }
