@@ -11,10 +11,12 @@
 
     <!--<xfg:ContentPageGloss.BackgroundGradient>
         <xfg:Gradient Rotation="190">
-            --><!--<xfg:GradientStep StepColor="#2e4252" StepPercentage="0" />
+            -->
+    <!--<xfg:GradientStep StepColor="#2e4252" StepPercentage="0" />
             <xfg:GradientStep StepColor="#253541" StepPercentage=".2" />
             <xfg:GradientStep StepColor="#121a21" StepPercentage=".6" />
-            <xfg:GradientStep StepColor="#121212" StepPercentage=".8" />--><!--
+            <xfg:GradientStep StepColor="#121212" StepPercentage=".8" />-->
+    <!--
 
             <xfg:GradientStep StepColor="#253541" StepPercentage="0" />
             <xfg:GradientStep StepColor="#1c2831" StepPercentage=".2" />
@@ -31,38 +33,39 @@
         </xfg:Gradient>
     </xfg:ContentPageGloss.BackgroundGradient>
 
-    <ScrollView HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand">
 
-        <StackLayout Padding="10, 40, 10, 10">
-            <SearchBar x:Name="MusicSearchBar" TextColor="White" PlaceholderColor="White" CancelButtonColor="White"
+
+    <StackLayout Padding="10, 40, 10, 10">
+        <SearchBar x:Name="MusicSearchBar" TextColor="White" PlaceholderColor="White" CancelButtonColor="White"
             SearchButtonPressed="SearchButtonPressed_Handler"
             TextChanged="SearchBarOnTextChanged"
             Placeholder="Search music" />
 
-            <!--Search results-->
-            <ListView x:Name="MusicResults" ItemsSource="{Binding YoutubeSearchResults}" RowHeight="100" ItemSelected="PlaylistPickedFromSearchResults" IsVisible="False">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <StackLayout Orientation="Vertical" Padding="5">
-                                <StackLayout Orientation="Horizontal">
-                                    <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100"/>
-                                    <StackLayout Orientation="Vertical">
-                                        <Label Text="{Binding Title}" TextColor="White"/>
-                                        <Label Text="{Binding VideoCount}" TextColor="White"/>
-                                    </StackLayout>
+        <!--Search results-->
+        <ListView x:Name="MusicResults" ItemsSource="{Binding YoutubeSearchResults}" RowHeight="100" ItemSelected="PlaylistPickedFromSearchResults" IsVisible="False">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" Padding="5">
+                            <StackLayout Orientation="Horizontal">
+                                <Image Source="{Binding ImageSource}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100"/>
+                                <StackLayout Orientation="Vertical">
+                                    <Label Text="{Binding Title}" TextColor="White"/>
+                                    <Label Text="{Binding VideoCount}" TextColor="White"/>
                                 </StackLayout>
                             </StackLayout>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
-            <StackLayout x:Name="MusicDiscovery" Orientation="Vertical" IsVisible="True">
+        <ScrollView x:Name="MusicDiscoveryScrollViewWrapper" HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand" IsVisible="True">
+            <StackLayout x:Name="MusicDiscovery" Orientation="Vertical">
 
                 <!--Made for you-->
                 <Label FontFamily="{StaticResource app-font}" Text="Made For You" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
-                
+
                 <!--//test 4 image grid custom playlists-->
                 <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" HeightRequest="200">
                     <Grid.ColumnDefinitions>
@@ -97,9 +100,9 @@
                         FontFamily="{StaticResource app-font}"
                         VerticalOptions="Start" FontSize="Micro" />
                     </Grid>
-                    
+
                     <!--custom playlist songs-->
-                        <Grid x:Name="customPlaylistsButton" Grid.Column="1" Padding="10,0,10,0" ColumnSpacing="0" RowSpacing="0">
+                    <Grid x:Name="customPlaylistsButton" Grid.Column="1" Padding="10,0,10,0" ColumnSpacing="0" RowSpacing="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50*"></ColumnDefinition>
                             <ColumnDefinition Width="50*"></ColumnDefinition>
@@ -128,62 +131,6 @@
                     </Grid>
 
                 </Grid>
-                
-                <!--<StackLayout Orientation="Horizontal">
-                    <StackLayout Orientation="Vertical" WidthRequest="140">
-                        <StackLayout Orientation="Horizontal" WidthRequest="140" HeightRequest="70">
-                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
-                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
-                        </StackLayout>
-                        <StackLayout Orientation="Horizontal" WidthRequest="140" HeightRequest="70">
-                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit" />
-                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
-                        </StackLayout>
-                    </StackLayout>
-
-                    <StackLayout Orientation="Vertical" WidthRequest="140">
-                        <StackLayout Orientation="Horizontal" WidthRequest="140" HeightRequest="70">
-                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
-                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
-                        </StackLayout>
-                        <StackLayout Orientation="Horizontal" WidthRequest="140" HeightRequest="70">
-                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit" />
-                            <Image Source="https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg" Aspect="AspectFit"/>
-                        </StackLayout>
-                    </StackLayout>
-                </StackLayout>-->
-                
-                
-                <!--<StackLayout Orientation="Horizontal">
-                    <StackLayout Orientation="Vertical" WidthRequest="120">
-                        <Button Style="{StaticResource MaterialIcons}" Text="&#x000f02d2;" HorizontalOptions="Start" FontSize="110" TextColor="White" Clicked="SavedSongsPlayListClicked"/>
-                        <Label  VerticalOptions="Center"
-                        FontFamily="{StaticResource app-font}"
-                        TextColor="White"
-                        Text="Your favorite songs playlist"
-                        FontSize="Small" />
-
-                        <Label x:Name="SavedSongsPlaylistCount"
-                        TextColor="LightGray"
-                        FontFamily="{StaticResource app-font}"
-                        VerticalOptions="Start" FontSize="Micro" />
-                    </StackLayout>
-
-                    <StackLayout Orientation="Vertical" WidthRequest="120">
-                        <Button Style="{StaticResource MaterialIcons}" Text="&#x000f0411;" HorizontalOptions="Start" FontSize="110" TextColor="White" Clicked="RecentlyPlayedPlayListClicked"/>
-                        <Label  VerticalOptions="Center"
-                        FontFamily="{StaticResource app-font}"
-                        TextColor="White"
-                        Text="Todays mix"
-                        FontSize="Small" />
-
-                        <Label x:Name="RecentPlaylistsSongCount"
-                        Text="x songs"
-                        TextColor="LightGray"
-                        FontFamily="{StaticResource app-font}"
-                        VerticalOptions="Start" FontSize="Micro" />
-                    </StackLayout>
-                </StackLayout>-->
 
                 <!--Recently Played-->
                 <Label FontFamily="{StaticResource app-font}" Text="Recently Played" FontSize="Medium" TextColor="White" Padding="10,10,0,0" FontAttributes="Bold"/>
@@ -245,6 +192,6 @@
 
             </StackLayout>
 
-        </StackLayout>
-    </ScrollView>
+        </ScrollView>
+    </StackLayout>
 </ContentPage>

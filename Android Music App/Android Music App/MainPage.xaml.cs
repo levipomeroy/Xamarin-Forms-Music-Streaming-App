@@ -117,7 +117,7 @@ namespace Android_Music_App
 
             MusicResults.ItemsSource = YoutubeSearchResults;
             MusicResults.IsVisible = true; //show search results
-            MusicDiscovery.IsVisible = false; //hide music discovery
+            MusicDiscoveryScrollViewWrapper.IsVisible = false; //hide music discovery
         }
 
         //playlist selected
@@ -142,7 +142,7 @@ namespace Android_Music_App
                 YoutubeSearchResults = null; //reset search results
                 MusicResults.ItemsSource = YoutubeSearchResults; //update listView
                 MusicResults.IsVisible = false; //hide search results
-                MusicDiscovery.IsVisible = true; //show music discovery
+                MusicDiscoveryScrollViewWrapper.IsVisible = true; //show music discovery
             }
         }
 

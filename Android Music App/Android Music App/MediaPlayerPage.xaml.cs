@@ -212,7 +212,7 @@ namespace Android_Music_App
                         {
                             Artist.Text = _selectedItem.Artist;
                             Artist.IsVisible = true;
-                            _selectedItem.Title.Replace($"{_selectedItem.Artist}-", string.Empty).Replace($"{_selectedItem.Artist} -", string.Empty).Replace($"{_selectedItem.Artist}", string.Empty);
+                            _selectedItem.Title = _selectedItem.Title.Replace($"{_selectedItem.Artist} -", string.Empty).Replace($"{_selectedItem.Artist}", string.Empty);
                         }
                         SongTitle.Text = _selectedItem.Title;
                         SongDuration.Text = SongTimeFormat(_mediaPlayer.Duration / 1000);

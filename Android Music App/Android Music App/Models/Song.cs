@@ -125,7 +125,7 @@ namespace Android_Music_App.Models
             //standardize seperator 
             Title = Regex.Replace(Title, "[+|:]", " - ");
             //show ampersand correctly
-            Title = Title.Replace("/U0026", "&");
+            Title = Title.Replace("\\U0026", "&");
             //remove multiple spaces
             Title = Regex.Replace(Title, @"\s+", " ");
             Title = Title.Trim();
@@ -133,7 +133,7 @@ namespace Android_Music_App.Models
 
         public void GetArtistName()
         {
-            Artist = Title.Contains("-") ? Title.Substring(0, Title.IndexOf('-')) : string.Empty;
+            Artist = Title.Contains("-") ? Title.Substring(0, Title.IndexOf('-')).Replace("\\U0026", "&") : string.Empty;
         }
     }
 }
