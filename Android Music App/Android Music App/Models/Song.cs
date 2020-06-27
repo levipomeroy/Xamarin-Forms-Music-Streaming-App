@@ -55,12 +55,11 @@ namespace Android_Music_App.Models
         {
             try
             {
-                
-
                 var searchFor = Title.ToLower()
                     .Replace("official", "")
                     .Replace("music", "")
                     .Replace("video", "")
+                    .Replace("on screen", "")
                     .Replace("lyrics", "");
 
                 CleanTitle();
@@ -102,6 +101,23 @@ namespace Android_Music_App.Models
                     }
                     else
                     {
+                        if (!string.IsNullOrWhiteSpace(Artist))
+                        {
+                            Title = Title.ToLower()
+                                .Replace($"{Artist.ToLower()} -", string.Empty)
+                                .Replace($"{Artist.ToLower()}-", string.Empty)
+                                .Replace($"{Artist.ToLower()}", string.Empty);
+                        }
+
+                        Title = Title.ToLower().Replace("official", string.Empty)
+                            .Replace("music", string.Empty)
+                            .Replace("video", string.Empty)
+                            .Replace("full hd", string.Empty)
+                            .Replace("on screen", string.Empty)
+                            .Replace("lyrics", string.Empty);
+
+                        CleanTitle();
+
                         FileManager.LogInfo($"Failed to get info from Itunes, url: {url}");
                     }
                 }
@@ -128,6 +144,11 @@ namespace Android_Music_App.Models
             Title = Title.Replace("\\U0026", "&");
             //remove multiple spaces
             Title = Regex.Replace(Title, @"\s+", " ");
+            Title = Title.Trim();
+            if (Title.StartsWith("-"))
+            {
+                Title = Title.Substring(Title.IndexOf('-') + 1);
+            }
             Title = Title.Trim();
         }
 

@@ -61,17 +61,17 @@ namespace Android_Music_App
             SavedSongsPlaylistCount.Text = $"{_savedSongs.Count} songs";
 
             _savedSongs.Shuffle();
-            savedSongListImage00.Source = _savedSongs.GetItemByIndex(0).ImageSource;
-            savedSongListImage01.Source = _savedSongs.GetItemByIndex(1).ImageSource;
-            savedSongListImage10.Source = _savedSongs.GetItemByIndex(2).ImageSource;
-            savedSongListImage11.Source = _savedSongs.GetItemByIndex(3).ImageSource;
+            savedSongListImage00.Source = _savedSongs.Count >= 1 ? _savedSongs.GetItemByIndex(0).ImageSource : "https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg";
+            savedSongListImage01.Source = _savedSongs.Count >= 2 ? _savedSongs.GetItemByIndex(1).ImageSource : "https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg";
+            savedSongListImage10.Source = _savedSongs.Count >= 3 ? _savedSongs.GetItemByIndex(2).ImageSource : "https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg";
+            savedSongListImage11.Source = _savedSongs.Count >= 4 ? _savedSongs.GetItemByIndex(3).ImageSource : "https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg";
 
             var playlistCopy = RecentlyPlayedPlaylists.ToList();
             playlistCopy.Shuffle();
-            recentPlaylistsPlaylistImage00.Source = playlistCopy.GetItemByIndex(0).ImageSource;
-            recentPlaylistsPlaylistImage01.Source = playlistCopy.GetItemByIndex(1).ImageSource;
-            recentPlaylistsPlaylistImage10.Source = playlistCopy.GetItemByIndex(2).ImageSource;
-            recentPlaylistsPlaylistImage11.Source = playlistCopy.GetItemByIndex(3).ImageSource;
+            recentPlaylistsPlaylistImage00.Source = playlistCopy.Count >= 1 ? playlistCopy.GetItemByIndex(0).ImageSource : "https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg";
+            recentPlaylistsPlaylistImage01.Source = playlistCopy.Count >= 2 ? playlistCopy.GetItemByIndex(1).ImageSource : "https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg";
+            recentPlaylistsPlaylistImage10.Source = playlistCopy.Count >= 3 ? playlistCopy.GetItemByIndex(2).ImageSource : "https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg";
+            recentPlaylistsPlaylistImage11.Source = playlistCopy.Count >= 4 ? playlistCopy.GetItemByIndex(3).ImageSource : "https://images.macrumors.com/t/MKlRm9rIBpfcGnjTpf6ZxgpFTUg=/1600x1200/smart/article-new/2018/05/apple-music-note.jpg";
 
             //Tap gesture handler for custom playlist
             var tapGestureRecognizer = new TapGestureRecognizer();
