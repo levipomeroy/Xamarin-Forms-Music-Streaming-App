@@ -171,7 +171,7 @@ namespace Android_Music_App
 
                 if ((_infoGatheredCount - _playedCount) <= 3) //only 3 or less ready, get more
                 {
-                    await GetNextSectionOfSongsInPlaylist().ConfigureAwait(false);
+                    GetNextSectionOfSongsInPlaylist().ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
